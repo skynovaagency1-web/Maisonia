@@ -1,0 +1,61 @@
+<%- include('partials/head') %>
+<% const v = values; const trades = splitList(v.trades); %>
+<div class="wrap">
+  <div class="page-head">
+    <p class="eyebrow">Espace artisan</p><h1 class="display">Mon profil</h1>
+    <% if (artisan.verified) { %><span class="badge verified">✓ Profil vérifié le <%= frDate(artisan.verified_at) %></span><% } else { %><span class="badge warn">Vérification en attente</span><% } %>
+  </div>
+  <div class="split">
+    <div class="panel">
+      <% if (error) { %><div class="alert error" role="alert"><%= error %></div><% } %>
+      <form class="stack" method="post" action="/espace-artisan/profil">
+        <fieldset>
+          <legend>Entreprise</legend>
+          <label>Raison sociale ou nom commercial<input type="text" name="company" required value="<%= v.company || '' %>"></label>
+          <div class="row">
+            <label>SIRET<input type="text" name="siret" required inputmode="numeric" maxlength="17" value="<%= v.siret || '' %>"><span class="hint">14 chiffres, vérifié sur l'annuaire des entreprises.</span></label>
+            <label>Qualifications <span class="hint">Facultatif : RGE, Qualibat, diplôme (CAP, BP)…</span><input type="text" name="qualification" value="<%= v.qualification || '' %>"></label>
+          </div>
+          <label>Adresse de l'entreprise<input type="text" name="address" required value="<%= v.address || '' %>"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Métiers et secteur</legend>
+          <div class="choice-row">
+            <% Object.entries(CATEGORIES).forEach(([k, l]) => { %><label class="choice"><input type="checkbox" name="trades" value="<%= k %>" <%= trades.includes(k) ? 'checked' : '' %>><span><%= l %></span></label><% }) %>
+          </div>
+          <label>Départements d'intervention<input type="text" name="departments" required placeholder="ex. 75, 92, 93, 94" value="<%= v.departments || '' %>"></label>
+          <label>Présentation<textarea name="bio" maxlength="3000" placeholder="Votre expérience, vos spécialités, votre façon de travailler…"><%= v.bio || '' %></textarea></label>
+        </fieldset>
+        <fieldset>
+          <legend>Assurance décennale</legend>
+          <div class="row">
+            <label>Assureur<input type="text" name="insurer" required value="<%= v.insurer || '' %>"></label>
+            <label>N° de contrat<input type="text" name="policy_number" required value="<%= v.policy_number || '' %>"></label>
+          </div>
+          <div class="row">
+            <label>Valable jusqu'au<input type="date" name="insurance_valid_until" required value="<%= v.insurance_valid_until || '' %>"></label>
+            <label>Couverture géographique<input type="text" name="insurance_area" placeholder="France métropolitaine" value="<%= v.insurance_area || '' %>"></label>
+          </div>
+          <p class="notice" style="margin:0">Ces informations figurent sur chacun de vos devis, comme l'exige la loi pour les travaux de bâtiment. Notre équipe vous demandera votre attestation d'assurance lors de la vérification. Toute modification du SIRET, des qualifications ou de l'assurance relance la vérification.</p>
+        </fieldset>
+        <button class="btn btn-dark" type="submit">Enregistrer</button>
+      </form>
+    </div>
+    <aside class="panel sticky" id="realisations">
+      <h3>Mes réalisations</h3>
+      <p class="small muted">Montrez vos plus beaux chantiers. Ces photos apparaissent sur votre profil public.</p>
+      <form class="stack" method="post" action="/espace-artisan/realisations" enctype="multipart/form-data">
+        <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required aria-label="Photos de réalisations">
+        <input type="text" name="caption" placeholder="Légende (ex. Salle de bain refaite à Vincennes)" aria-label="Légende">
+        <button class="btn btn-light btn-sm" type="submit">Ajouter</button>
+      </form>
+      <div class="portfolio" style="margin-top:16px;grid-template-columns:repeat(2,1fr)">
+        <% portfolio.forEach(p => { %>
+          <figure><img src="/uploads/<%= p.filename %>" alt="<%= p.caption || 'Réalisation' %>"><figcaption><%= p.caption %>
+            <form method="post" action="/espace-artisan/realisations/<%= p.id %>/supprimer"><button class="link small" style="color:var(--err);padding:0">Supprimer</button></form></figcaption></figure>
+        <% }) %>
+      </div>
+    </aside>
+  </div>
+</div>
+<%- include('partials/foot') %>

@@ -1,0 +1,18 @@
+<%- include('partials/head') %>
+<div class="narrow" style="max-width:520px">
+  <div class="page-head"><h1 class="display">Nouveau mot de passe</h1></div>
+  <div class="panel">
+    <% if (!valid) { %>
+      <p>Ce lien n'est plus valable : il a expiré ou a déjà été utilisé.</p>
+      <a class="btn btn-dark" href="/mot-de-passe-oublie">Demander un nouveau lien</a>
+    <% } else { %>
+      <% if (error) { %><div class="alert error" role="alert"><%= error %></div><% } %>
+      <form class="stack" method="post">
+        <label for="reset-pw">Nouveau mot de passe<input id="reset-pw" type="password" name="password" required minlength="8" autocomplete="new-password"><span class="hint">8 caractères minimum.</span></label>
+        <label for="reset-pw2">Confirmez le mot de passe<input id="reset-pw2" type="password" name="password_confirm" required minlength="8" autocomplete="new-password"></label>
+        <button class="btn btn-dark" type="submit">Enregistrer</button>
+      </form>
+    <% } %>
+  </div>
+</div>
+<%- include('partials/foot') %>

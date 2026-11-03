@@ -1,0 +1,50 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <div class="page-head"><p class="eyebrow">Administration</p><h1 class="display">Vérification des artisans</h1>
+    <p class="muted">Avant de valider : contrôlez le SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank" rel="noopener">l'annuaire des entreprises</a>, demandez l'attestation d'assurance décennale (assureur, n° de contrat, validité, activités couvertes) et, pour les métiers réglementés, la qualification professionnelle.</p></div>
+  <div class="panel table-wrap">
+    <table>
+      <thead><tr><th>Artisan</th><th>SIRET</th><th>Métiers / secteur</th><th>Assurance</th><th>Statut</th><th></th></tr></thead>
+      <tbody>
+        <% artisans.forEach(a => { const expired = a.insurance_valid_until && a.insurance_valid_until < new Date().toISOString().slice(0, 10); %>
+          <tr>
+            <td><strong><%= a.company || '(profil incomplet)' %></strong><br><span class="small muted"><%= a.name %> · <%= a.email %> · <%= a.phone %></span></td>
+            <td><% if (a.siret) { %><a href="https://annuaire-entreprises.data.gouv.fr/etablissement/<%= a.siret %>" target="_blank" rel="noopener"><%= a.siret %></a><% } else { %>—<% } %></td>
+            <td class="small"><%= splitList(a.trades).map(t => CATEGORIES[t]).join(', ') %><br><%= a.departments %></td>
+            <td class="small"><%= a.insurer || '—' %> <%= a.policy_number %><br><span class="<%= expired ? 'badge err' : '' %>">jusqu'au <%= frDate(a.insurance_valid_until) || '—' %></span><% if (a.qualification) { %><br><%= a.qualification %><% } %></td>
+            <td><span class="badge <%= a.verified ? 'verified' : 'warn' %>"><%= a.verified ? 'Vérifié' : 'À vérifier' %></span></td>
+            <td>
+              <form method="post" action="/admin/artisans/<%= a.user_id %>/verifier">
+                <% if (a.verified) { %><input type="hidden" name="action" value="retirer"><button class="btn btn-light btn-sm">Retirer</button>
+                <% } else if (a.company && a.siret && a.insurer) { %><input type="hidden" name="action" value="verifier"><button class="btn btn-dark btn-sm">Valider</button><% } %>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <section style="margin-top:40px" id="contacts">
+    <h2>Messages et signalements</h2>
+    <% if (!contacts.length) { %><div class="panel"><p class="muted" style="margin:0">Aucun message.</p></div><% } %>
+    <div class="list">
+      <% contacts.forEach(c => { %>
+        <div class="list-item" style="align-items:flex-start">
+          <div style="flex:1 1 400px;min-width:0"><strong><%= c.name %></strong> <span class="small muted">&lt;<%= c.email %>&gt; · <%= frDate(c.created_at) %></span><br>
+            <span class="badge"><%= c.topic %></span><% if (c.reference) { %> <span class="small muted">Concerne : <%= c.reference %></span><% } %>
+            <p style="white-space:pre-line;margin:.5em 0 0"><%= c.body %></p></div>
+          <% if (c.handled) { %><span class="badge ok">Traité</span><% } else { %><form method="post" action="/admin/contacts/<%= c.id %>/traite"><button class="btn btn-light btn-sm">Marquer traité</button></form><% } %>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+  <section style="margin-top:40px">
+    <h2>Dernières demandes</h2>
+    <div class="list">
+      <% requests.forEach(r => { %>
+        <a class="list-item" href="/demandes/<%= r.id %>"><div><strong><%= r.title %></strong><br><span class="small muted"><%= CATEGORIES[r.category] %> · <%= r.postcode %> <%= r.city %> · <%= frDate(r.created_at) %></span></div><span class="badge"><%= r.quote_count %> devis · <%= r.status %></span></a>
+      <% }) %>
+    </div>
+  </section>
+</div>
+<%- include('partials/foot') %>

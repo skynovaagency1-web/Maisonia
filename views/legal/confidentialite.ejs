@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<div class="narrow">
+  <div class="page-head"><p class="eyebrow">RGPD</p><h1 class="display">Politique de confidentialité</h1><p class="muted">Dernière mise à jour : <%= new Date().toLocaleDateString('fr-FR') %></p></div>
+  <div class="panel" style="display:grid;gap:8px">
+    <p class="notice"><strong>À compléter avant la mise en ligne :</strong> les mentions entre crochets doivent être remplacées par les informations réelles de la société qui exploite Servizone.</p>
+    <h3>Qui est responsable de vos données ?</h3>
+    <p>[Raison sociale], [forme juridique], [adresse du siège], SIREN [numéro]. Contact pour toute question sur vos données : <strong>[adresse e-mail dédiée]</strong>.</p>
+    <h3>Quelles données et pourquoi ?</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Finalité</th><th>Données</th><th>Base légale</th><th>Durée de conservation</th></tr></thead>
+      <tbody>
+        <tr><td>Créer et gérer votre compte</td><td>Nom, e-mail, téléphone, mot de passe (chiffré)</td><td>Exécution du contrat (conditions d'utilisation)</td><td>Jusqu'à la suppression du compte, ou 3 ans d'inactivité</td></tr>
+        <tr><td>Transmettre votre demande de travaux aux artisans</td><td>Description, photos, adresse, code postal, ville, date souhaitée</td><td>Exécution du contrat, à votre demande</td><td>3 ans après votre dernière activité</td></tr>
+        <tr><td>Échanger les coordonnées après acceptation d'un devis</td><td>Nom, téléphone, e-mail, adresse des travaux</td><td>Exécution du contrat</td><td>Durée de la relation, puis 3 ans</td></tr>
+        <tr><td>Vérifier les artisans (SIRET, assurance, qualifications)</td><td>Données professionnelles de l'entreprise</td><td>Intérêt légitime : sécurité des utilisateurs</td><td>Durée d'inscription de l'artisan</td></tr>
+        <tr><td>Publier les avis</td><td>Note, commentaire, prénom</td><td>Exécution du contrat</td><td>Durée de vie du profil de l'artisan</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Qui peut voir vos données ?</h3>
+    <p>Votre demande (sans votre nom ni votre adresse exacte) n'est visible que par les artisans vérifiés du métier et du département concernés. Votre nom, votre adresse et vos coordonnées sont transmis uniquement à l'artisan dont vous acceptez le devis. L'équipe Servizone y a accès pour assurer le service. Notre hébergeur [nom, pays] stocke les données. Aucune donnée n'est vendue ni utilisée à des fins publicitaires.</p>
+    <p>Les photos d'illustration du site sont chargées depuis le service Unsplash, qui reçoit à cette occasion l'adresse IP de votre navigateur.</p>
+    <h3>Cookies</h3>
+    <p>Nous utilisons un seul cookie, strictement nécessaire au fonctionnement de votre session de connexion. Il ne nécessite pas votre consentement. Nous n'utilisons aucun cookie publicitaire ni de mesure d'audience.</p>
+    <h3>Vos droits</h3>
+    <p>Vous pouvez accéder à vos données, les rectifier, les effacer, en limiter le traitement, vous opposer à leur traitement et demander leur portabilité, en écrivant à [adresse e-mail dédiée]. Vous pouvez supprimer votre compte à tout moment depuis la page « Mon compte ». Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">CNIL</a>.</p>
+  </div>
+</div>
+<%- include('../partials/foot') %>
