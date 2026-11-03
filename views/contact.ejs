@@ -1,0 +1,37 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <div class="page-head"><p class="eyebrow">Aide</p><h1 class="display">Nous contacter</h1><p class="muted">Une question, un souci avec un artisan ou un client, un avis à signaler ? Écrivez-nous, nous répondons sous 48 h ouvrées.</p></div>
+  <div class="split">
+    <div class="panel">
+      <% if (sent) { %>
+        <h3>Message envoyé</h3><p>Merci, nous revenons vers vous par e-mail rapidement.</p><a class="btn btn-light" href="/">Retour à l'accueil</a>
+      <% } else { %>
+        <% if (error) { %><div class="alert error" role="alert"><%= error %></div><% } %>
+        <form class="stack" method="post" action="/contact">
+          <div class="row">
+            <label for="c-name">Nom<input id="c-name" type="text" name="name" required autocomplete="name" value="<%= values.name || '' %>"></label>
+            <label for="c-email">E-mail<input id="c-email" type="email" name="email" required autocomplete="email" value="<%= values.email || '' %>"></label>
+          </div>
+          <label for="c-topic">Sujet
+            <select id="c-topic" name="topic" required><option value="">Choisissez…</option>
+              <% Object.entries(TOPICS).forEach(([k, l]) => { %><option value="<%= k %>" <%= values.topic === k ? 'selected' : '' %>><%= l %></option><% }) %>
+            </select>
+          </label>
+          <label for="c-ref">Demande, devis ou artisan concerné <span class="hint">Facultatif : lien ou nom</span><input id="c-ref" type="text" name="reference" maxlength="200" value="<%= values.reference || '' %>"></label>
+          <label for="c-body">Votre message<textarea id="c-body" name="body" required minlength="10" maxlength="5000"><%= values.body || '' %></textarea></label>
+          <div style="position:absolute;left:-9999px" aria-hidden="true"><label>Site web<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+          <p class="notice">Vos coordonnées et votre message servent uniquement à traiter votre demande et sont conservés 3 ans au plus. <a href="/confidentialite">Politique de confidentialité</a>.</p>
+          <button class="btn btn-dark" type="submit">Envoyer</button>
+        </form>
+      <% } %>
+    </div>
+    <aside class="panel panel-dark sticky">
+      <p class="eyebrow" style="color:var(--gold)">Avant d'écrire</p>
+      <h3>La réponse est peut-être ici</h3>
+      <p class="muted">Devis, vérification des artisans, avis, suppression de compte : consultez les questions fréquentes.</p>
+      <a class="btn btn-sand" href="/aide">Questions fréquentes</a>
+      <p class="small muted" style="margin-top:18px">Un litige sur des travaux ? Le contrat est conclu entre vous et l'artisan, mais signalez-nous tout problème : nous pouvons suspendre un artisan qui ne respecte pas nos règles.</p>
+    </aside>
+  </div>
+</div>
+<%- include('partials/foot') %>

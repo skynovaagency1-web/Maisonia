@@ -233,3 +233,23 @@ footer .legal { border-top: 1px solid rgba(231,223,216,.15); margin-top: 36px; p
   body { background: #fff; }
   .quote-doc { border: 0; padding: 0; }
 }
+
+/* Messagerie */
+.thread { display: grid; gap: 10px; max-height: 480px; overflow-y: auto; padding: 4px; }
+.bubble { max-width: 80%; padding: 10px 14px; border-radius: 18px 18px 18px 6px; background: var(--sand); }
+.bubble.mine { justify-self: end; background: var(--espresso); color: var(--cream); border-radius: 18px 18px 6px 18px; }
+.bubble.mine .muted { color: var(--taupe); }
+
+/* FAQ */
+details.faq { border-bottom: 1px solid var(--line); padding: 14px 0; }
+details.faq summary { cursor: pointer; font-family: var(--head); font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+details.faq summary::after { content: '+'; font-family: var(--display); font-size: 1.4rem; line-height: 1; color: var(--brown-2); }
+details.faq[open] summary::after { content: '–'; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq p { margin: .6em 0 0; color: var(--muted); }
+.link-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+.link-cloud a { text-decoration: none; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); font-size: .9rem; }
+.link-cloud a:hover { border-color: var(--gold); }
+.price-card { display: grid; gap: 14px; align-content: start; }
+.price-card .amount { font-family: var(--display); font-weight: 300; font-size: 3.4rem; line-height: 1; }
+.price-card ul { padding-left: 18px; margin: 0; display: grid; gap: 6px; }

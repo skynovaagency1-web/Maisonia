@@ -30,6 +30,7 @@
                 <td class="num"><strong><%= euro(q.total_ttc) %></strong><br><span class="small muted"><%= euro(q.total_ht) %> HT</span></td>
                 <td class="num">
                   <a class="btn btn-light btn-sm" href="/devis/<%= q.id %>">Voir le devis</a>
+                  <a class="btn btn-light btn-sm" href="/devis/<%= q.id %>#messages">Messages<%= q.message_count ? ' (' + q.message_count + ')' : '' %></a>
                   <% if (q.status === 'accepted') { %><span class="badge ok">Accepté</span><% } else if (q.status === 'declined') { %><span class="badge">Non retenu</span><% } %>
                 </td>
               </tr>
@@ -47,6 +48,7 @@
             <p><strong><%= euro(q.total_ttc) %> TTC</strong> · envoyé le <%= frDate(q.created_at) %> ·
               <span class="badge <%= { sent: 'warn', accepted: 'ok', declined: '' }[q.status] %>"><%= { sent: 'En attente de réponse', accepted: 'Accepté', declined: 'Non retenu' }[q.status] %></span></p>
             <a class="btn btn-light btn-sm" href="/devis/<%= q.id %>">Voir le devis</a>
+            <a class="btn btn-light btn-sm" href="/devis/<%= q.id %>#messages">Messages<%= q.message_count ? ' (' + q.message_count + ')' : '' %></a>
           <% } else if (!artisan.verified) { %>
             <h3>Votre profil est en cours de vérification</h3>
             <p class="muted">Vous pourrez envoyer un devis dès que notre équipe aura validé votre SIRET et votre assurance.</p>

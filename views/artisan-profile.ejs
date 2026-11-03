@@ -45,6 +45,7 @@
         <tr><th>Assurance</th><td>Décennale <%= a.insurer %><br><span class="small muted">valable jusqu'au <%= frDate(a.insurance_valid_until) %></span></td></tr>
       </table>
       <p class="small muted">Les coordonnées de l'artisan vous sont communiquées dès que vous acceptez son devis.</p>
+      <a class="small" href="/contact?sujet=artisan&ref=<%= encodeURIComponent((a.company || a.name) + ' (profil ' + a.id + ')') %>">Signaler un problème</a>
     </aside>
   </div>
 </div>

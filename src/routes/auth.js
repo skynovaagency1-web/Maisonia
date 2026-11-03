@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const { one, run, tx } = require('../db');
 const { hashPassword, checkPassword } = require('../lib');
+const crypto = require('node:crypto');
 const { requireRole, removeUploads } = require('../middleware');
+const mailer = require('../mailer');
 const { all } = require('../db');
 
 const safeNext = (n) => (typeof n === 'string' && /^\/[^/\\]/.test(n) ? n : null);
@@ -52,6 +54,48 @@ router.post('/connexion', (req, res) => {
     req.session.userId = u.id;
     res.redirect(safeNext(req.body.next) || home(u));
   });
+});
+
+// Mot de passe oublié : même réponse que le compte existe ou non, lien valable 1 heure.
+const sha = (t) => crypto.createHash('sha256').update(t).digest('hex');
+
+router.get('/mot-de-passe-oublie', (req, res) => res.render('forgot', { title: 'Mot de passe oublié', sent: false }));
+
+router.post('/mot-de-passe-oublie', async (req, res) => {
+  const email = String(req.body.email || '').trim().toLowerCase();
+  const u = one('SELECT id, email FROM users WHERE email = ?', email);
+  if (u) {
+    const token = crypto.randomBytes(32).toString('base64url');
+    run("DELETE FROM password_resets WHERE user_id = ? OR expires_at < datetime('now')", u.id);
+    run("INSERT INTO password_resets (token_hash, user_id, expires_at) VALUES (?, ?, datetime('now', '+1 hour'))", sha(token), u.id);
+    await mailer.send(u.email, 'Réinitialiser votre mot de passe Maisonia', [
+      'Bonjour,', '', 'Pour choisir un nouveau mot de passe, ouvrez ce lien (valable 1 heure) :', mailer.link(`/reinitialiser/${token}`), '',
+      "Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail : votre mot de passe reste inchangé.",
+    ]);
+  }
+  res.render('forgot', { title: 'Mot de passe oublié', sent: true });
+});
+
+function resetFor(token) {
+  return one("SELECT * FROM password_resets WHERE token_hash = ? AND expires_at > datetime('now')", sha(String(token)));
+}
+
+router.get('/reinitialiser/:token', (req, res) => {
+  res.render('reset', { title: 'Nouveau mot de passe', valid: Boolean(resetFor(req.params.token)), error: null });
+});
+
+router.post('/reinitialiser/:token', (req, res) => {
+  const r = resetFor(req.params.token);
+  if (!r) return res.status(400).render('reset', { title: 'Nouveau mot de passe', valid: false, error: null });
+  const pw = String(req.body.password || '');
+  if (pw.length < 8) return res.status(400).render('reset', { title: 'Nouveau mot de passe', valid: true, error: 'Le mot de passe doit contenir au moins 8 caractères.' });
+  if (pw !== req.body.password_confirm) return res.status(400).render('reset', { title: 'Nouveau mot de passe', valid: true, error: 'Les deux mots de passe ne correspondent pas.' });
+  tx(() => {
+    run('UPDATE users SET password_hash = ? WHERE id = ?', hashPassword(pw), r.user_id);
+    run('DELETE FROM password_resets WHERE user_id = ?', r.user_id);
+  });
+  req.flash('success', 'Mot de passe modifié. Vous pouvez vous connecter.');
+  res.redirect('/connexion');
 });
 
 router.post('/deconnexion', (req, res) => req.session.destroy(() => res.redirect('/')));

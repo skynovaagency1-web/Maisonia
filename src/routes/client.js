@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { one, all, run, tx } = require('../db');
 const { CATEGORIES, departmentFromPostcode, splitList } = require('../lib');
 const { requireRole, upload, httpError, removeUploads } = require('../middleware');
+const mailer = require('../mailer');
 
 const STATUS = { open: 'En attente de devis', assigned: 'Artisan choisi', done: 'Travaux terminés', cancelled: 'Annulée' };
 
@@ -51,8 +52,15 @@ router.post('/demandes/nouvelle', requireRole('client'), upload.array('photos', 
     for (const f of files) run('INSERT INTO request_photos (request_id, filename) VALUES (?, ?)', r.lastInsertRowid, f.filename);
     return r.lastInsertRowid;
   });
-  const n = one(`SELECT COUNT(*) AS n FROM artisans WHERE verified = 1
-    AND (',' || trades || ',') LIKE ? AND (',' || departments || ',') LIKE ?`, `%,${v.category},%`, `%,${department},%`).n;
+  const recipients = all(`SELECT u.email FROM artisans a JOIN users u ON u.id = a.user_id WHERE a.verified = 1
+    AND (',' || a.trades || ',') LIKE ? AND (',' || a.departments || ',') LIKE ?`, `%,${v.category},%`, `%,${department},%`);
+  for (const a of recipients) {
+    mailer.send(a.email, `Nouvelle demande : ${CATEGORIES[v.category]} à ${v.city.trim()}`, [
+      'Bonjour,', '', `Un particulier de votre secteur cherche un artisan : « ${v.title.trim()} » (${v.postcode.trim()} ${v.city.trim()}).`,
+      'Consultez la demande et envoyez votre devis :', mailer.link(`/demandes/${id}`),
+    ]);
+  }
+  const n = recipients.length;
   req.flash('success', n
     ? `Demande publiée : ${n} artisan${n > 1 ? 's' : ''} vérifié${n > 1 ? 's' : ''} de votre secteur ${n > 1 ? 'peuvent' : 'peut'} maintenant vous envoyer un devis.`
     : "Demande publiée. Aucun artisan vérifié ne couvre encore votre secteur : notre équipe vous recontacte pour vous trouver quelqu'un.");
@@ -71,6 +79,7 @@ router.get('/demandes/:id', requireRole(), (req, res) => {
   if (!access) throw httpError(404, 'Demande introuvable.');
   const photos = all('SELECT * FROM request_photos WHERE request_id = ?', request.id);
   const quotes = all(`SELECT q.*, u.name, a.company, a.verified,
+      (SELECT COUNT(*) FROM messages m WHERE m.quote_id = q.id) AS message_count,
       (SELECT ROUND(AVG(rating), 1) FROM reviews WHERE artisan_id = q.artisan_id) AS rating,
       (SELECT COUNT(*) FROM reviews WHERE artisan_id = q.artisan_id) AS review_count
     FROM quotes q JOIN users u ON u.id = q.artisan_id JOIN artisans a ON a.user_id = q.artisan_id
@@ -101,6 +110,11 @@ router.post('/devis/:id/accepter', requireRole('client'), (req, res) => {
     run("UPDATE quotes SET status = CASE WHEN id = ? THEN 'accepted' ELSE 'declined' END WHERE request_id = ?", quote.id, request.id);
     run("UPDATE requests SET status = 'assigned' WHERE id = ?", request.id);
   });
+  const pro = one('SELECT email FROM users WHERE id = ?', quote.artisan_id);
+  if (pro) mailer.send(pro.email, `Votre devis est accepté : ${request.title}`, [
+    'Bonne nouvelle !', '', `${req.user.name} a accepté votre devis de ${quote.total_ttc.toLocaleString('fr-FR')} € TTC pour « ${request.title} ».`,
+    'Ses coordonnées et l’adresse du chantier sont maintenant visibles ici :', mailer.link(`/demandes/${request.id}`),
+  ]);
   req.flash('success', "Devis accepté. Vous avez maintenant les coordonnées de l'artisan, et il a les vôtres.");
   res.redirect(`/demandes/${request.id}`);
 });
@@ -142,7 +156,25 @@ router.get('/devis/:id', requireRole(), (req, res) => {
   if (!allowed) throw httpError(404, 'Devis introuvable.');
   const items = all('SELECT * FROM quote_items WHERE quote_id = ? ORDER BY id', quote.id);
   const artisan = one('SELECT u.name, u.email, u.phone, a.* FROM users u JOIN artisans a ON a.user_id = u.id WHERE u.id = ?', quote.artisan_id);
-  res.render('quote', { title: `Devis n° ${quote.id}`, quote, items, request, artisan, isOwner: request.client_id === req.user.id });
+  const messages = all('SELECT m.*, u.name, u.role FROM messages m JOIN users u ON u.id = m.sender_id WHERE m.quote_id = ? ORDER BY m.id', quote.id);
+  res.render('quote', { title: `Devis n° ${quote.id}`, quote, items, request, artisan, messages, isOwner: request.client_id === req.user.id });
+});
+
+// Messagerie entre le particulier et l'artisan, rattachée au devis.
+router.post('/devis/:id/messages', requireRole('client', 'artisan'), (req, res) => {
+  const quote = one('SELECT * FROM quotes WHERE id = ?', req.params.id);
+  if (!quote) throw httpError(404, 'Devis introuvable.');
+  const request = loadRequest(quote.request_id);
+  const isClient = request.client_id === req.user.id;
+  if (!isClient && quote.artisan_id !== req.user.id) throw httpError(404, 'Devis introuvable.');
+  const body = String(req.body.body || '').trim();
+  if (!body || body.length > 2000) throw httpError(400, 'Le message doit contenir entre 1 et 2000 caractères.');
+  run('INSERT INTO messages (quote_id, sender_id, body) VALUES (?, ?, ?)', quote.id, req.user.id, body);
+  const to = one('SELECT email FROM users WHERE id = ?', isClient ? quote.artisan_id : request.client_id);
+  if (to) mailer.send(to.email, `Nouveau message : ${request.title}`, [
+    `${req.user.name} vous a écrit au sujet de « ${request.title} » :`, '', body.slice(0, 500), '', 'Répondre :', mailer.link(`/devis/${quote.id}#messages`),
+  ]);
+  res.redirect(`/devis/${quote.id}#messages`);
 });
 
 module.exports = router;

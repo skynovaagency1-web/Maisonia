@@ -24,6 +24,20 @@
       </tbody>
     </table>
   </div>
+  <section style="margin-top:40px" id="contacts">
+    <h2>Messages et signalements</h2>
+    <% if (!contacts.length) { %><div class="panel"><p class="muted" style="margin:0">Aucun message.</p></div><% } %>
+    <div class="list">
+      <% contacts.forEach(c => { %>
+        <div class="list-item" style="align-items:flex-start">
+          <div style="flex:1 1 400px;min-width:0"><strong><%= c.name %></strong> <span class="small muted">&lt;<%= c.email %>&gt; · <%= frDate(c.created_at) %></span><br>
+            <span class="badge"><%= c.topic %></span><% if (c.reference) { %> <span class="small muted">Concerne : <%= c.reference %></span><% } %>
+            <p style="white-space:pre-line;margin:.5em 0 0"><%= c.body %></p></div>
+          <% if (c.handled) { %><span class="badge ok">Traité</span><% } else { %><form method="post" action="/admin/contacts/<%= c.id %>/traite"><button class="btn btn-light btn-sm">Marquer traité</button></form><% } %>
+        </div>
+      <% }) %>
+    </div>
+  </section>
   <section style="margin-top:40px">
     <h2>Dernières demandes</h2>
     <div class="list">

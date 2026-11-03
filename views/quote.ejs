@@ -59,5 +59,27 @@
     <p class="notice" style="margin-top:20px">Assurance de responsabilité civile décennale : <strong><%= a.insurer %></strong>, contrat n° <%= a.policy_number %>, valable jusqu'au <%= frDate(a.insurance_valid_until) %>. Couverture géographique : <%= a.insurance_area || 'France métropolitaine' %>.</p>
     <p class="small muted">Devis transmis via Maisonia. Maisonia met en relation particuliers et artisans et n'est pas partie au contrat de travaux.</p>
   </article>
+  <% if (user.role !== 'admin' || messages.length) { %>
+  <section class="panel no-print" id="messages" style="margin-top:24px">
+    <h3>Messages</h3>
+    <p class="small muted">Posez vos questions sur ce devis (dates, matériaux, accès au chantier). <% if (q.status !== 'accepted') { %>Pour votre sécurité, gardez vos échanges ici jusqu'à l'acceptation du devis.<% } %></p>
+    <div class="thread">
+      <% if (!messages.length) { %><p class="muted">Aucun message pour l'instant.</p><% } %>
+      <% messages.forEach(m => { const mine = m.sender_id === user.id; %>
+        <div class="bubble <%= mine ? 'mine' : '' %>">
+          <div class="small muted"><%= mine ? 'Vous' : (m.role === 'artisan' ? (a.company || m.name) : m.name.split(' ')[0]) %> · <%= frDate(m.created_at) %></div>
+          <div style="white-space:pre-line"><%= m.body %></div>
+        </div>
+      <% }) %>
+    </div>
+    <% if (user.role !== 'admin') { %>
+      <form class="stack" method="post" action="/devis/<%= q.id %>/messages" style="margin-top:14px">
+        <label for="msg-body" class="sr-only" style="position:absolute;left:-9999px">Votre message</label>
+        <textarea id="msg-body" name="body" required maxlength="2000" placeholder="Votre message…" style="min-height:90px"></textarea>
+        <div><button class="btn btn-dark btn-sm" type="submit">Envoyer</button></div>
+      </form>
+    <% } %>
+  </section>
+  <% } %>
 </div>
 <%- include('partials/foot') %>

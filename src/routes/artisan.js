@@ -3,6 +3,7 @@ const { one, all, run, tx } = require('../db');
 const { CATEGORIES, isValidSiret, splitList } = require('../lib');
 const { requireRole, upload, httpError, removeUploads } = require('../middleware');
 const { artisanMatches, STATUS } = require('./client');
+const mailer = require('../mailer');
 
 const artisanOf = (id) => one('SELECT u.name, u.email, u.phone, a.* FROM users u JOIN artisans a ON a.user_id = u.id WHERE u.id = ?', id);
 const profileComplete = (a) => Boolean(a.company && a.siret && a.address && a.trades && a.departments && a.insurer && a.policy_number && a.insurance_valid_until);
@@ -132,6 +133,11 @@ router.post('/demandes/:id/devis/nouveau', requireRole('artisan'), (req, res) =>
     for (const it of items) run('INSERT INTO quote_items (quote_id, label, unit, qty, unit_price_ht) VALUES (?, ?, ?, ?, ?)', q.lastInsertRowid, it.label, it.unit, it.qty, it.unit_price_ht);
     return q.lastInsertRowid;
   });
+  const client = one('SELECT email FROM users WHERE id = ?', request.client_id);
+  if (client) mailer.send(client.email, `Nouveau devis pour « ${request.title} »`, [
+    'Bonjour,', '', `${artisanOf(req.user.id).company} vous a envoyé un devis de ${totalTtc.toLocaleString('fr-FR')} € TTC.`,
+    'Comparez-le aux autres devis reçus :', mailer.link(`/demandes/${request.id}`),
+  ]);
   req.flash('success', 'Devis envoyé au particulier.');
   res.redirect(`/devis/${id}`);
 });
