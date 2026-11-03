@@ -19,7 +19,7 @@
       "binding": "DB",
       "database_name": "servizone",
       // À remplacer par l'identifiant affiché par « npx wrangler d1 create servizone ».
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "be56ceed-bbee-4cb9-b048-bdff3f78107e",
       "migrations_dir": "migrations"
     }
   ],
