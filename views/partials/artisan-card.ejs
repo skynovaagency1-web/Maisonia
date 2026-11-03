@@ -7,7 +7,7 @@
       <% if (a.verified) { %><span class="badge verified">✓ Vérifié</span><% } %>
     </div>
     <div class="small">
-      <% if (a.review_count) { %><span class="stars">★</span> <strong><%= String(a.rating).replace('.', ',') %></strong> <span class="muted">(<%= a.review_count %> avis)</span><% } else { %><span class="muted">Nouveau sur Maisonia</span><% } %>
+      <% if (a.review_count) { %><span class="stars">★</span> <strong><%= String(a.rating).replace('.', ',') %></strong> <span class="muted">(<%= a.review_count %> avis)</span><% } else { %><span class="muted">Nouveau sur Servizone</span><% } %>
     </div>
     <div class="tags"><% trades.forEach(t => { %><span class="badge"><%= CATEGORIES[t] %></span><% }) %></div>
     <div class="small muted">Intervient dans : <%= splitList(a.departments).join(', ') %></div>

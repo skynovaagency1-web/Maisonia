@@ -11,7 +11,7 @@ const { diskStorage } = require('../src/storage-node');
 const { hashPassword, isValidSiret, departmentFromPostcode } = require('../src/lib');
 
 db.setDriver(nodeDriver(':memory:'));
-const uploadDir = fs.mkdtempSync(path.join(os.tmpdir(), 'maisonia-'));
+const uploadDir = fs.mkdtempSync(path.join(os.tmpdir(), 'servizone-'));
 setStorage(diskStorage(uploadDir));
 const app = require('../src/app');
 

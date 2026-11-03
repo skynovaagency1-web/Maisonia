@@ -9,7 +9,7 @@
   <section style="margin-top:32px">
     <h2><%= artisans.length ? 'Nos ' + trade.plural + ' vérifiés à ' + city.name : 'Bientôt des ' + trade.plural + ' à ' + city.name %></h2>
     <% if (!artisans.length) { %>
-      <div class="panel"><p class="muted" style="margin:0">Aucun professionnel vérifié n'est encore inscrit dans ce secteur. Publiez votre demande : notre équipe vous trouve quelqu'un. Vous êtes <%= trade.label.toLowerCase() %> à <%= city.name %> ? <a href="/inscription?role=artisan">Rejoignez Maisonia</a>.</p></div>
+      <div class="panel"><p class="muted" style="margin:0">Aucun professionnel vérifié n'est encore inscrit dans ce secteur. Publiez votre demande : notre équipe vous trouve quelqu'un. Vous êtes <%= trade.label.toLowerCase() %> à <%= city.name %> ? <a href="/inscription?role=artisan">Rejoignez Servizone</a>.</p></div>
     <% } else { %>
       <div class="grid grid-3"><% artisans.forEach(a => { %><%- include('partials/artisan-card', { a }) %><% }) %></div>
     <% } %>

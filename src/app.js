@@ -34,7 +34,7 @@ app.use((req, res, next) => {
     const secret = process.env.SESSION_SECRET;
     if (!secret && process.env.NODE_ENV === 'production') throw new Error('SESSION_SECRET manquant.');
     sessionMw = cookieSession({
-      name: 'maisonia',
+      name: 'servizone',
       keys: [secret || crypto.randomBytes(32).toString('hex')],
       httpOnly: true,
       sameSite: 'lax',

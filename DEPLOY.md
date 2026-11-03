@@ -1,6 +1,6 @@
-# Put Maisonia online with Cloudflare
+# Put Servizone online with Cloudflare
 
-Maisonia runs entirely on Cloudflare:
+Servizone runs entirely on Cloudflare:
 
 - **Workers** runs the site (the code in `src/`, entry point `src/worker.mjs`).
 - **D1** is the database (tables in `migrations/`).
@@ -16,7 +16,7 @@ On GitHub, open the pull request and click **Merge**. Cloudflare deploys the `ma
 ## 2. Create the database (D1)
 
 1. Log in at https://dash.cloudflare.com.
-2. Go to **Storage & Databases → D1 SQL Database → Create database**. Name it `maisonia`.
+2. Go to **Storage & Databases → D1 SQL Database → Create database**. Name it `servizone`.
 3. Copy the **Database ID** shown on the database page.
 4. Paste it into `wrangler.jsonc` in place of `00000000-0000-0000-0000-000000000000` (on GitHub, open the file, click the pencil icon, then **Commit changes**), or send it to Claude, who will do it.
 5. Open the database's **Console** tab, paste the contents of `migrations/0001_init.sql` and click **Execute**. This creates the tables.
@@ -24,20 +24,20 @@ On GitHub, open the pull request and click **Merge**. Cloudflare deploys the `ma
 ## 3. Create the photo storage (R2)
 
 1. Go to **Storage & Databases → R2 Object Storage**. If asked, enable R2 by adding a payment method.
-2. Click **Create bucket** and name it `maisonia-photos`. Keep the defaults.
+2. Click **Create bucket** and name it `servizone-photos`. Keep the defaults.
 
 ## 4. Connect the GitHub repository
 
 1. Go to **Compute → Workers & Pages → Create → Import a repository**.
 2. Connect GitHub if needed, then choose `skynovaagency1-web/Maisonia`.
-3. Keep the suggested settings: project name `maisonia`, build command empty, deploy command `npx wrangler deploy`, branch `main`.
-4. Click **Create and deploy**. After a minute or two the site is live at `https://maisonia.<your-account>.workers.dev`.
+3. Keep the suggested settings: project name `servizone`, build command empty, deploy command `npx wrangler deploy`, branch `main`.
+4. Click **Create and deploy**. After a minute or two the site is live at `https://servizone.<your-account>.workers.dev`.
 
 Every later merge on `main` redeploys automatically.
 
 ## 5. Add the secrets
 
-In the `maisonia` Worker, go to **Settings → Variables and Secrets → Add**. Choose the **Secret** type for each:
+In the `servizone` Worker, go to **Settings → Variables and Secrets → Add**. Choose the **Secret** type for each:
 
 | Name | Value |
 | --- | --- |
@@ -51,9 +51,9 @@ Click **Deploy** to apply them. The admin account is created on the first visit 
 
 ## 6. Use your own domain
 
-1. Add your domain (for example `maisonia.fr`) to Cloudflare: **Websites → Add a site**, then follow the steps to change the nameservers at your registrar.
-2. In the `maisonia` Worker, go to **Settings → Domains & Routes → Add → Custom domain** and enter `maisonia.fr` (and `www.maisonia.fr` if you like).
-3. If your domain isn't `maisonia.fr`, change `APP_URL` and `MAIL_FROM` in `wrangler.jsonc` (links in emails and the sitemap use them).
+1. Add your domain (for example `servizone.fr`) to Cloudflare: **Websites → Add a site**, then follow the steps to change the nameservers at your registrar.
+2. In the `servizone` Worker, go to **Settings → Domains & Routes → Add → Custom domain** and enter `servizone.fr` (and `www.servizone.fr` if you like).
+3. If your domain isn't `servizone.fr`, change `APP_URL` and `MAIL_FROM` in `wrangler.jsonc` (links in emails and the sitemap use them).
 
 ## 7. Send emails (Resend)
 

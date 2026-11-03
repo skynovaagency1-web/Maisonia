@@ -19,7 +19,7 @@ router.post('/admin/artisans/:id/verifier', requireRole('admin'), async (req, re
   await run(`UPDATE artisans SET verified = ?, verified_at = ${verify ? "datetime('now')" : 'NULL'} WHERE user_id = ?`, verify ? 1 : 0, a.user_id);
   if (verify) {
     const u = await one('SELECT email FROM users WHERE id = ?', a.user_id);
-    await mailer.send(u.email, 'Votre profil Maisonia est vérifié', [
+    await mailer.send(u.email, 'Votre profil Servizone est vérifié', [
       'Bonjour,', '', 'Votre SIRET et votre assurance ont été vérifiés : vous pouvez maintenant envoyer des devis aux particuliers de votre secteur.',
       mailer.link('/espace-artisan'),
     ]);

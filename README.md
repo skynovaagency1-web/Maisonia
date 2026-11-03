@@ -1,6 +1,6 @@
-# Maisonia
+# Servizone
 
-Maisonia met en relation les particuliers avec des artisans vérifiés près de chez eux pour leurs travaux de plomberie, d'électricité, de peinture et leurs petits travaux.
+Servizone met en relation les particuliers avec des artisans vérifiés près de chez eux pour leurs travaux de plomberie, d'électricité, de peinture et leurs petits travaux.
 
 Première version (pilote) : gratuite, sans paiement en ligne.
 
@@ -44,7 +44,7 @@ npm run dev        # http://localhost:8787 (Cloudflare en local : D1 et R2 simul
 npm test
 ```
 
-Mode Node.js seul (base SQLite dans `data/`, photos dans `uploads/`) : `npm run seed` puis `npm start` (http://localhost:3000). Comptes de démonstration (mot de passe `maisonia123`) : `camille@maisonia.test` (particulier), `karim@`, `sophie@`, `thomas@maisonia.test` (artisans), `admin@maisonia.test` (admin).
+Mode Node.js seul (base SQLite dans `data/`, photos dans `uploads/`) : `npm run seed` puis `npm start` (http://localhost:3000). Comptes de démonstration (mot de passe `servizone123`) : `camille@servizone.test` (particulier), `karim@`, `sophie@`, `thomas@servizone.test` (artisans), `admin@servizone.test` (admin).
 
 | Variable | Rôle |
 | --- | --- |

@@ -1,8 +1,8 @@
 {
-  "name": "maisonia",
+  "name": "servizone",
   "version": "0.2.0",
   "private": true,
-  "description": "Maisonia : mise en relation entre particuliers et artisans locaux (plomberie, électricité, peinture, petits travaux).",
+  "description": "Servizone : mise en relation entre particuliers et artisans locaux (plomberie, électricité, peinture, petits travaux).",
   "engines": {
     "node": ">=22.13"
   },
@@ -11,8 +11,8 @@
     "start": "npm run build && node --disable-warning=ExperimentalWarning src/server.js",
     "seed": "node --disable-warning=ExperimentalWarning scripts/seed.js",
     "dev": "wrangler dev",
-    "db:migrate:local": "wrangler d1 migrations apply maisonia --local",
-    "db:migrate": "wrangler d1 migrations apply maisonia --remote",
+    "db:migrate:local": "wrangler d1 migrations apply servizone --local",
+    "db:migrate": "wrangler d1 migrations apply servizone --remote",
     "deploy": "wrangler deploy",
     "pretest": "npm run build",
     "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"

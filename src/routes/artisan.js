@@ -85,7 +85,7 @@ async function quoteContext(req) {
   const artisan = await artisanOf(req.user.id);
   if (!request || !artisanMatches(artisan, request)) throw httpError(404, 'Demande introuvable.');
   if (request.status !== 'open') throw httpError(400, "Cette demande n'accepte plus de devis.");
-  if (!artisan.verified) throw httpError(403, 'Votre profil doit être vérifié par Maisonia avant de pouvoir envoyer des devis.');
+  if (!artisan.verified) throw httpError(403, 'Votre profil doit être vérifié par Servizone avant de pouvoir envoyer des devis.');
   if (artisan.insurance_valid_until < new Date().toISOString().slice(0, 10)) throw httpError(403, 'Votre attestation d’assurance a expiré : mettez-la à jour dans votre profil.');
   if (await one('SELECT id FROM quotes WHERE request_id = ? AND artisan_id = ?', request.id, req.user.id)) throw httpError(400, 'Vous avez déjà envoyé un devis pour cette demande.');
   return { request, artisan };

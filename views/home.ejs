@@ -2,7 +2,7 @@
 <% const cats = Object.entries(CATEGORIES); %>
 <div class="wrap">
   <section class="hero" style="--hero-img:url('<%= HERO %>')">
-    <div class="watermark" aria-hidden="true">MAISONIA</div>
+    <div class="watermark" aria-hidden="true">SERVIZONE</div>
     <div class="hero-grid">
       <div>
         <p class="eyebrow">Plomberie · Électricité · Peinture · Petits travaux</p>
@@ -22,7 +22,7 @@
         </div>
       </div>
       <div>
-        <p class="deck-label">Ils font appel à Maisonia</p>
+        <p class="deck-label">Ils font appel à Servizone</p>
         <div class="deck" id="deck" aria-label="Exemples de travaux">
           <% const featured = [['plomberie','Fuite sous évier réparée','Paris 11e'],['peinture','Salon repeint en 2 jours','Montreuil'],['electricite','Tableau électrique remis aux normes','Boulogne'],['petits-travaux','Étagères et luminaires posés','Vincennes'],['peinture','Chambre d’enfant rafraîchie','Saint-Denis']]; %>
           <% featured.forEach(([c, t, city], i) => { %>
@@ -99,7 +99,7 @@
           <div><div class="kpi"><%= stats.requests %></div><span class="small muted">demandes publiées</span></div>
           <div><div class="kpi"><%= stats.rating ? String(stats.rating).replace('.', ',') : '—' %></div><span class="small muted">note moyenne / 5</span></div>
         </div>
-        <div><a class="btn btn-dark" href="/inscription?role=artisan">Rejoindre Maisonia <span class="arrow">→</span></a></div>
+        <div><a class="btn btn-dark" href="/inscription?role=artisan">Rejoindre Servizone <span class="arrow">→</span></a></div>
       </div>
     </div>
   </section>

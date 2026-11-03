@@ -1,7 +1,7 @@
 {
-  // Configuration Cloudflare Workers de Maisonia. Voir DEPLOIEMENT.md.
+  // Configuration Cloudflare Workers de Servizone. Voir DEPLOIEMENT.md.
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "maisonia",
+  "name": "servizone",
   "main": "src/worker.mjs",
   "compatibility_date": "2025-10-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -11,17 +11,17 @@
   "observability": { "enabled": true },
   "vars": {
     "NODE_ENV": "production",
-    "APP_URL": "https://maisonia.fr",
-    "MAIL_FROM": "Maisonia <noreply@maisonia.fr>"
+    "APP_URL": "https://servizone.fr",
+    "MAIL_FROM": "Servizone <noreply@servizone.fr>"
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "maisonia",
-      // À remplacer par l'identifiant affiché par « npx wrangler d1 create maisonia ».
+      "database_name": "servizone",
+      // À remplacer par l'identifiant affiché par « npx wrangler d1 create servizone ».
       "database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "migrations"
     }
   ],
-  "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "maisonia-photos" }]
+  "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "servizone-photos" }]
 }

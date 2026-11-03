@@ -44,12 +44,12 @@ router.get('/confidentialite', async (req, res) => res.render('legal/confidentia
 router.get('/mentions-legales', async (req, res) => res.render('legal/mentions', { title: 'Mentions légales' }));
 router.get('/conditions', async (req, res) => res.render('legal/conditions', { title: "Conditions d'utilisation" }));
 
-router.get('/aide', async (req, res) => res.render('help', { title: 'Questions fréquentes', description: 'Comment fonctionne Maisonia pour les particuliers et les artisans : demandes, devis, vérifications, avis et données personnelles.' }));
+router.get('/aide', async (req, res) => res.render('help', { title: 'Questions fréquentes', description: 'Comment fonctionne Servizone pour les particuliers et les artisans : demandes, devis, vérifications, avis et données personnelles.' }));
 
-router.get('/tarifs-artisans', async (req, res) => res.render('pricing', { title: 'Tarifs artisans', description: 'Maisonia est gratuit pour les artisans pendant la phase pilote.' }));
+router.get('/tarifs-artisans', async (req, res) => res.render('pricing', { title: 'Tarifs artisans', description: 'Servizone est gratuit pour les artisans pendant la phase pilote.' }));
 
 const TOPICS = {
-  question: 'Une question sur Maisonia',
+  question: 'Une question sur Servizone',
   artisan: 'Un problème avec un artisan',
   client: 'Un problème avec un client',
   avis: 'Signaler un avis',

@@ -57,7 +57,7 @@
     <p style="margin-top:20px">Taux horaire de main-d'œuvre : <strong><%= euro(q.labour_rate_ttc) %> TTC / heure</strong><br>
       Modalités de décompte du temps : <%= q.time_method %></p>
     <p class="notice" style="margin-top:20px">Assurance de responsabilité civile décennale : <strong><%= a.insurer %></strong>, contrat n° <%= a.policy_number %>, valable jusqu'au <%= frDate(a.insurance_valid_until) %>. Couverture géographique : <%= a.insurance_area || 'France métropolitaine' %>.</p>
-    <p class="small muted">Devis transmis via Maisonia. Maisonia met en relation particuliers et artisans et n'est pas partie au contrat de travaux.</p>
+    <p class="small muted">Devis transmis via Servizone. Servizone met en relation particuliers et artisans et n'est pas partie au contrat de travaux.</p>
   </article>
   <% if (user.role !== 'admin' || messages.length) { %>
   <section class="panel no-print" id="messages" style="margin-top:24px">

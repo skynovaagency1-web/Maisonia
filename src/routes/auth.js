@@ -33,7 +33,7 @@ router.post('/inscription', async (req, res) => {
     req.flash('success', 'Compte créé. Complétez votre profil professionnel pour être vérifié.');
     return res.redirect('/espace-artisan/profil');
   }
-  req.flash('success', 'Bienvenue sur Maisonia !');
+  req.flash('success', 'Bienvenue sur Servizone !');
   res.redirect(safeNext(v.next) || '/demandes/nouvelle');
 });
 
@@ -61,7 +61,7 @@ router.post('/mot-de-passe-oublie', async (req, res) => {
     const token = crypto.randomBytes(32).toString('base64url');
     await run("DELETE FROM password_resets WHERE user_id = ? OR expires_at < datetime('now')", u.id);
     await run("INSERT INTO password_resets (token_hash, user_id, expires_at) VALUES (?, ?, datetime('now', '+1 hour'))", sha(token), u.id);
-    await mailer.send(u.email, 'Réinitialiser votre mot de passe Maisonia', [
+    await mailer.send(u.email, 'Réinitialiser votre mot de passe Servizone', [
       'Bonjour,', '', 'Pour choisir un nouveau mot de passe, ouvrez ce lien (valable 1 heure) :', mailer.link(`/reinitialiser/${token}`), '',
       "Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail : votre mot de passe reste inchangé.",
     ]);

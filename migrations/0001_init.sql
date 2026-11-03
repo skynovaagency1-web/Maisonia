@@ -1,4 +1,4 @@
--- Schéma Maisonia (D1 / SQLite)
+-- Schéma Servizone (D1 / SQLite)
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY,
   role TEXT NOT NULL CHECK (role IN ('client','artisan','admin')),

@@ -4,14 +4,14 @@ const { run } = require('./db');
 
 const cfg = () => ({
   key: process.env.RESEND_API_KEY,
-  from: process.env.MAIL_FROM || 'Maisonia <noreply@maisonia.fr>',
+  from: process.env.MAIL_FROM || 'Servizone <noreply@servizone.fr>',
   url: (process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, ''),
 });
 const link = (p) => cfg().url + p;
 
 async function send(to, subject, lines) {
   const { key, from, url } = cfg();
-  const text = [...lines, '', '—', "L'équipe Maisonia", url].join('\n');
+  const text = [...lines, '', '—', "L'équipe Servizone", url].join('\n');
   if (!key) {
     await run('INSERT INTO outbox (to_email, subject, body) VALUES (?, ?, ?)', to, subject, text);
     if (process.env.NODE_ENV !== 'test') console.log(`[e-mail] à ${to} : ${subject}`);

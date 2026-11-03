@@ -6,7 +6,7 @@
       <p class="eyebrow"><%= trades.map(t => CATEGORIES[t]).join(' · ') %></p>
       <h1 class="display"><%= a.company || a.name %></h1>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-        <% if (a.verified) { %><span class="badge verified">✓ Profil vérifié par Maisonia</span><% } else { %><span class="badge warn">En attente de vérification</span><% } %>
+        <% if (a.verified) { %><span class="badge verified">✓ Profil vérifié par Servizone</span><% } else { %><span class="badge warn">En attente de vérification</span><% } %>
         <% if (a.review_count) { %><span><span class="stars"><%= '★'.repeat(Math.round(a.rating)) %></span> <strong><%= String(a.rating).replace('.', ',') %>/5</strong> <span class="muted">· <%= a.review_count %> avis</span></span><% } %>
       </div>
     </div>
