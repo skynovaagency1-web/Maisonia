@@ -1,13 +1,18 @@
-const app = require('./app');
-const { one, run } = require('./db');
-const { hashPassword } = require('./lib');
+// Lancement local avec Node.js : base SQLite dans data/, photos dans uploads/.
+const path = require('node:path');
+const express = require('express');
+const { setDriver } = require('./db');
+const { nodeDriver } = require('./db-node');
+const { setStorage } = require('./storage');
+const { diskStorage } = require('./storage-node');
 
-// Compte administrateur créé au démarrage si ADMIN_EMAIL et ADMIN_PASSWORD sont définis.
-const { ADMIN_EMAIL, ADMIN_PASSWORD } = process.env;
-if (ADMIN_EMAIL && ADMIN_PASSWORD && !one('SELECT id FROM users WHERE email = ?', ADMIN_EMAIL.toLowerCase())) {
-  run("INSERT INTO users (role, name, email, password_hash) VALUES ('admin', 'Administrateur', ?, ?)", ADMIN_EMAIL.toLowerCase(), hashPassword(ADMIN_PASSWORD));
-  console.log(`Compte admin créé : ${ADMIN_EMAIL}`);
-}
+setDriver(nodeDriver(process.env.DB_FILE || path.join(__dirname, '..', 'data', 'maisonia.db')));
+setStorage(diskStorage(path.join(__dirname, '..', 'uploads')));
+
+const app = require('./app');
+const site = express();
+site.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: '1h' }));
+site.use(app);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Maisonia : http://localhost:${port}`));
+site.listen(port, () => console.log(`Maisonia : http://localhost:${port}`));

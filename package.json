@@ -1,26 +1,29 @@
 {
   "name": "maisonia",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Maisonia : mise en relation entre particuliers et artisans locaux (plomberie, électricité, peinture, petits travaux).",
-  "main": "src/server.js",
   "engines": {
     "node": ">=22.13"
   },
   "scripts": {
-    "start": "node --disable-warning=ExperimentalWarning src/server.js",
-    "dev": "node --watch --disable-warning=ExperimentalWarning src/server.js",
+    "build": "node scripts/build-views.js",
+    "start": "npm run build && node --disable-warning=ExperimentalWarning src/server.js",
     "seed": "node --disable-warning=ExperimentalWarning scripts/seed.js",
+    "dev": "wrangler dev",
+    "db:migrate:local": "wrangler d1 migrations apply maisonia --local",
+    "db:migrate": "wrangler d1 migrations apply maisonia --remote",
+    "deploy": "wrangler deploy",
+    "pretest": "npm run build",
     "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
   },
   "dependencies": {
-    "@fontsource-variable/dm-sans": "^5.3.0",
-    "@fontsource-variable/jost": "^5.3.0",
-    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "cookie-session": "^2.1.1",
     "ejs": "^7.0.2",
     "express": "^5.3.0",
-    "express-session": "^1.19.0",
-    "multer": "^2.5.0",
-    "nodemailer": "^10.3.1"
+    "multer": "^2.5.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.157.0"
   }
 }

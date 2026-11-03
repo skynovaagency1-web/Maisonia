@@ -1,0 +1,27 @@
+{
+  // Configuration Cloudflare Workers de Maisonia. Voir DEPLOIEMENT.md.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "maisonia",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2025-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "build": { "command": "npm run build" },
+  // Fichiers statiques (CSS, polices, favicon) servis directement par Cloudflare.
+  "assets": { "directory": "./public" },
+  "observability": { "enabled": true },
+  "vars": {
+    "NODE_ENV": "production",
+    "APP_URL": "https://maisonia.fr",
+    "MAIL_FROM": "Maisonia <noreply@maisonia.fr>"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "maisonia",
+      // À remplacer par l'identifiant affiché par « npx wrangler d1 create maisonia ».
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "maisonia-photos" }]
+}

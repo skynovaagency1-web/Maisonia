@@ -1,6 +1,6 @@
-const path = require('node:path');
 const crypto = require('node:crypto');
 const multer = require('multer');
+const storage = require('./storage');
 
 function requireRole(...roles) {
   return (req, res, next) => {
@@ -17,10 +17,7 @@ function requireRole(...roles) {
 
 const IMAGE_TYPES = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: path.join(__dirname, '..', 'uploads'),
-    filename: (req, file, cb) => cb(null, crypto.randomBytes(16).toString('hex') + IMAGE_TYPES[file.mimetype]),
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024, files: 5 },
   fileFilter: (req, file, cb) => {
     if (IMAGE_TYPES[file.mimetype]) return cb(null, true);
@@ -30,6 +27,19 @@ const upload = multer({
   },
 });
 
+// Enregistre les photos reçues et renvoie leurs noms de fichier.
+async function saveUploads(files = []) {
+  const keys = [];
+  for (const f of files) {
+    const key = crypto.randomBytes(16).toString('hex') + IMAGE_TYPES[f.mimetype];
+    await storage.put(key, f.buffer, f.mimetype);
+    keys.push(key);
+  }
+  return keys;
+}
+
+const removeUploads = (keys) => storage.remove(keys);
+
 function httpError(status, message) {
   const e = new Error(message);
   e.status = status;
@@ -37,10 +47,4 @@ function httpError(status, message) {
   return e;
 }
 
-module.exports = { requireRole, upload, httpError };
-
-const fs = require('node:fs');
-function removeUploads(filenames) {
-  for (const f of filenames) fs.rm(path.join(__dirname, '..', 'uploads', path.basename(f)), { force: true }, () => {});
-}
-module.exports.removeUploads = removeUploads;
+module.exports = { requireRole, upload, saveUploads, removeUploads, httpError };
