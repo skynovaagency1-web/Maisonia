@@ -1,0 +1,107 @@
+<%- include('partials/head') %>
+<% const r = request; const statusClass = { open: 'warn', assigned: 'verified', done: 'ok', cancelled: 'err' }[r.status]; %>
+<div class="wrap">
+  <div class="page-head">
+    <p class="eyebrow"><%= CATEGORIES[r.category] %> · <%= r.postcode %> <%= r.city %></p>
+    <h1 class="display"><%= r.title %></h1>
+    <span class="badge <%= statusClass %>"><%= STATUS[r.status] %></span>
+    <span class="small muted"> · publiée le <%= frDate(r.created_at) %><%= r.desired_date ? ' · souhaitée pour le ' + frDate(r.desired_date) : '' %></span>
+  </div>
+  <div class="split">
+    <div class="grid" style="gap:24px">
+      <div class="panel">
+        <h3>Description</h3>
+        <p style="white-space:pre-line"><%= r.description %></p>
+        <% if (photos.length) { %><div class="thumbs"><% photos.forEach(p => { %><a href="/uploads/<%= p.filename %>" target="_blank"><img src="/uploads/<%= p.filename %>" alt="Photo des travaux"></a><% }) %></div><% } %>
+      </div>
+
+      <% if (access === 'owner' || access === 'admin') { %>
+        <div class="panel" id="devis">
+          <h3>Devis reçus (<%= quotes.length %>)</h3>
+          <% if (!quotes.length) { %><p class="muted">Pas encore de devis. Les artisans vérifiés de votre secteur ont été prévenus de votre demande.</p><% } else { %>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Artisan</th><th>Avis</th><th>Début</th><th class="num">Total TTC</th><th></th></tr></thead>
+            <tbody>
+            <% quotes.forEach(q => { %>
+              <tr>
+                <td><a href="/artisans/<%= q.artisan_id %>"><strong><%= q.company || q.name %></strong></a><% if (q.verified) { %> <span class="badge verified">✓</span><% } %><br><span class="small muted">valable <%= q.validity_days %> jours · devis <%= q.quote_free ? 'gratuit' : 'payant' %></span></td>
+                <td><%= q.review_count ? '★ ' + String(q.rating).replace('.', ',') + ' (' + q.review_count + ')' : '—' %></td>
+                <td><%= frDate(q.start_date) %><br><span class="small muted"><%= q.duration %></span></td>
+                <td class="num"><strong><%= euro(q.total_ttc) %></strong><br><span class="small muted"><%= euro(q.total_ht) %> HT</span></td>
+                <td class="num">
+                  <a class="btn btn-light btn-sm" href="/devis/<%= q.id %>">Voir le devis</a>
+                  <% if (q.status === 'accepted') { %><span class="badge ok">Accepté</span><% } else if (q.status === 'declined') { %><span class="badge">Non retenu</span><% } %>
+                </td>
+              </tr>
+            <% }) %>
+            </tbody>
+          </table></div>
+          <% } %>
+        </div>
+      <% } %>
+
+      <% if (access === 'artisan') { %>
+        <div class="panel">
+          <% if (quotes.length) { const q = quotes[0]; %>
+            <h3>Votre devis</h3>
+            <p><strong><%= euro(q.total_ttc) %> TTC</strong> · envoyé le <%= frDate(q.created_at) %> ·
+              <span class="badge <%= { sent: 'warn', accepted: 'ok', declined: '' }[q.status] %>"><%= { sent: 'En attente de réponse', accepted: 'Accepté', declined: 'Non retenu' }[q.status] %></span></p>
+            <a class="btn btn-light btn-sm" href="/devis/<%= q.id %>">Voir le devis</a>
+          <% } else if (!artisan.verified) { %>
+            <h3>Votre profil est en cours de vérification</h3>
+            <p class="muted">Vous pourrez envoyer un devis dès que notre équipe aura validé votre SIRET et votre assurance.</p>
+          <% } else { %>
+            <h3>Intéressé par ce chantier ?</h3>
+            <p class="muted">Envoyez un devis détaillé. Le particulier compare les devis reçus et choisit librement.</p>
+            <a class="btn btn-dark" href="/demandes/<%= r.id %>/devis/nouveau">Envoyer un devis <span class="arrow">→</span></a>
+          <% } %>
+        </div>
+      <% } %>
+
+      <% if (access === 'owner' && r.status === 'done') { %>
+        <div class="panel" id="avis">
+          <% if (review) { %>
+            <h3>Votre avis</h3><p><span class="stars"><%= '★'.repeat(review.rating) %></span> <%= review.comment %></p>
+          <% } else { %>
+            <h3>Comment s'est passé le chantier ?</h3>
+            <form class="stack" method="post" action="/demandes/<%= r.id %>/avis">
+              <div class="choice-row" role="radiogroup" aria-label="Note">
+                <% [5,4,3,2,1].forEach(n => { %><label class="choice"><input type="radio" name="rating" value="<%= n %>" required><span><%= '★'.repeat(n) %></span></label><% }) %>
+              </div>
+              <label>Votre commentaire <span class="hint">Restez factuel et courtois : il sera publié sur le profil de l'artisan avec votre prénom.</span><textarea name="comment" maxlength="2000"></textarea></label>
+              <button class="btn btn-dark" type="submit">Publier mon avis</button>
+            </form>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <aside class="grid sticky" style="gap:20px">
+      <% if (contact) { %>
+        <div class="panel panel-dark">
+          <p class="eyebrow" style="color:var(--gold)">Votre artisan</p>
+          <h3><%= accepted.company || contact.name %></h3>
+          <p><%= contact.name %><br><a style="color:var(--sand)" href="tel:<%= contact.phone %>"><%= contact.phone %></a><br><a style="color:var(--sand)" href="mailto:<%= contact.email %>"><%= contact.email %></a></p>
+        </div>
+      <% } %>
+      <div class="panel">
+        <h3><%= access === 'artisan' ? 'Client' : 'Lieu des travaux' %></h3>
+        <% if (showClientContact) { %>
+          <p><% if (access !== 'owner') { %><%= r.client_name %><br><% } %><%= r.address %><br><%= r.postcode %> <%= r.city %>
+          <% if (access !== 'owner') { %><br><a href="tel:<%= r.client_phone %>"><%= r.client_phone %></a><br><a href="mailto:<%= r.client_email %>"><%= r.client_email %></a><% } %></p>
+        <% } else { %>
+          <p><%= r.postcode %> <%= r.city %></p>
+          <p class="small muted">L'adresse et les coordonnées du client vous seront communiquées s'il accepte votre devis.</p>
+        <% } %>
+      </div>
+      <% if (access === 'owner') { %>
+        <% if (r.status === 'assigned') { %>
+          <form method="post" action="/demandes/<%= r.id %>/terminer"><button class="btn btn-dark" style="width:100%">Les travaux sont terminés</button></form>
+        <% } else if (r.status === 'open') { %>
+          <form method="post" action="/demandes/<%= r.id %>/annuler" onsubmit="return confirm('Annuler cette demande ?')"><button class="btn btn-light" style="width:100%">Annuler la demande</button></form>
+        <% } %>
+      <% } %>
+    </aside>
+  </div>
+</div>
+<%- include('partials/foot') %>

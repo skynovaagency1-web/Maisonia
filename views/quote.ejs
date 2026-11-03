@@ -1,0 +1,63 @@
+<%- include('partials/head') %>
+<% const q = quote, a = artisan, r = request; const showAddress = isOwner || q.status === 'accepted' || (user.role === 'admin'); const vat = q.total_ttc - q.total_ht; %>
+<div class="wrap" style="max-width:920px">
+  <div class="page-head no-print" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+    <a href="/demandes/<%= r.id %>">← Retour à la demande</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-light btn-sm" onclick="window.print()">Imprimer / PDF</button>
+      <% if (isOwner && q.status === 'sent' && r.status === 'open') { %>
+        <form method="post" action="/devis/<%= q.id %>/accepter" onsubmit="return confirm('Accepter ce devis ? Les autres devis seront déclinés et vos coordonnées seront transmises à cet artisan.')">
+          <button class="btn btn-dark btn-sm">Accepter ce devis</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+  <article class="quote-doc">
+    <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div><p class="eyebrow">Devis</p><h1 class="display" style="font-size:2.2rem;margin:0">N° <%= String(q.id).padStart(5, '0') %></h1></div>
+      <div style="text-align:right">
+        <div>Date de rédaction : <strong><%= frDate(q.created_at) %></strong></div>
+        <div>Validité de l'offre : <strong><%= q.validity_days %> jours</strong></div>
+        <div>Devis <strong><%= q.quote_free ? 'gratuit' : 'payant : ' + euro(q.quote_cost) %></strong></div>
+        <% if (q.status !== 'sent') { %><span class="badge <%= q.status === 'accepted' ? 'ok' : '' %>"><%= q.status === 'accepted' ? 'Accepté' : 'Non retenu' %></span><% } %>
+      </div>
+    </div>
+    <div class="parties">
+      <div class="panel" style="padding:18px">
+        <p class="eyebrow">Entreprise</p>
+        <strong><%= a.company %></strong><br><%= a.address %><br>SIRET : <%= a.siret %><br><%= a.phone %> · <%= a.email %>
+        <% if (a.qualification) { %><br><span class="small muted">Qualifications : <%= a.qualification %></span><% } %>
+      </div>
+      <div class="panel" style="padding:18px">
+        <p class="eyebrow">Client et lieu d'exécution</p>
+        <strong><%= r.client_name %></strong><br>
+        <% if (showAddress) { %><%= r.address %><br><% } %><%= r.postcode %> <%= r.city %>
+      </div>
+    </div>
+    <h3>Nature des travaux</h3>
+    <p><strong><%= r.title %></strong> (<%= CATEGORIES[r.category] %>)</p>
+    <% if (q.message) { %><p style="white-space:pre-line"><%= q.message %></p><% } %>
+    <p>Début prévu : <strong><%= frDate(q.start_date) %></strong> · Durée estimée : <strong><%= q.duration %></strong></p>
+
+    <h3 style="margin-top:24px">Décompte détaillé</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Désignation</th><th class="num">Quantité</th><th>Unité</th><th class="num">Prix unitaire HT</th><th class="num">Total HT</th></tr></thead>
+      <tbody>
+        <% items.forEach(it => { %>
+          <tr><td><%= it.label %></td><td class="num"><%= String(it.qty).replace('.', ',') %></td><td><%= it.unit %></td><td class="num"><%= euro(it.unit_price_ht) %></td><td class="num"><%= euro(it.qty * it.unit_price_ht) %></td></tr>
+        <% }) %>
+        <tr><td>Frais de déplacement</td><td class="num">1</td><td>forfait</td><td class="num"><%= euro(q.travel_fee_ht) %></td><td class="num"><%= euro(q.travel_fee_ht) %></td></tr>
+      </tbody>
+    </table></div>
+    <table class="totals" style="margin-top:14px">
+      <tr><td>Total HT</td><td class="num"><%= euro(q.total_ht) %></td></tr>
+      <tr><td>TVA (<%= String(q.vat_rate).replace('.', ',') %> %)</td><td class="num"><%= euro(vat) %></td></tr>
+      <tr class="total"><td>Total TTC</td><td class="num"><%= euro(q.total_ttc) %></td></tr>
+    </table>
+    <p style="margin-top:20px">Taux horaire de main-d'œuvre : <strong><%= euro(q.labour_rate_ttc) %> TTC / heure</strong><br>
+      Modalités de décompte du temps : <%= q.time_method %></p>
+    <p class="notice" style="margin-top:20px">Assurance de responsabilité civile décennale : <strong><%= a.insurer %></strong>, contrat n° <%= a.policy_number %>, valable jusqu'au <%= frDate(a.insurance_valid_until) %>. Couverture géographique : <%= a.insurance_area || 'France métropolitaine' %>.</p>
+    <p class="small muted">Devis transmis via Maisonia. Maisonia met en relation particuliers et artisans et n'est pas partie au contrat de travaux.</p>
+  </article>
+</div>
+<%- include('partials/foot') %>

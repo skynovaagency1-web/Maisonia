@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> · Maisonia</title>
+  <meta name="description" content="Maisonia met en relation les particuliers avec des artisans vérifiés près de chez eux : plomberie, électricité, peinture et petits travaux.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/fonts/jost/index.css">
+  <link rel="stylesheet" href="/fonts/dm-sans/index.css">
+  <link rel="stylesheet" href="/fonts/plus-jakarta-sans/index.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="topbar">Pilote gratuit · Artisans vérifiés : SIRET et assurance décennale contrôlés</div>
+  <nav class="nav" id="nav">
+    <a class="logo" href="/" aria-label="Maisonia, accueil">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 15 16 6l11 9v11H5z"/><path d="M13 26v-7h6v7"/><ellipse cx="16" cy="16" rx="14.5" ry="5" transform="rotate(-18 16 16)" stroke="#cdb69e" stroke-width="1"/></svg>
+      Maisonia
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" onclick="const n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))">Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="/artisans" class="<%= path.startsWith('/artisans') ? 'active' : '' %>">Trouver un artisan</a>
+      <% if (!user) { %>
+        <a href="/inscription?role=artisan">Vous êtes artisan ?</a>
+        <a href="/connexion" class="<%= path === '/connexion' ? 'active' : '' %>">Connexion</a>
+        <a class="btn btn-dark btn-sm" href="/demandes/nouvelle">Publier une demande</a>
+      <% } else if (user.role === 'client') { %>
+        <a href="/mes-demandes" class="<%= path === '/mes-demandes' ? 'active' : '' %>">Mes demandes</a>
+        <a href="/compte">Mon compte</a>
+        <a class="btn btn-dark btn-sm" href="/demandes/nouvelle">Nouvelle demande</a>
+      <% } else if (user.role === 'artisan') { %>
+        <a href="/espace-artisan" class="<%= path === '/espace-artisan' ? 'active' : '' %>">Mes chantiers</a>
+        <a href="/espace-artisan/profil" class="<%= path === '/espace-artisan/profil' ? 'active' : '' %>">Mon profil</a>
+        <a href="/compte">Mon compte</a>
+      <% } else { %>
+        <a href="/admin">Administration</a>
+      <% } %>
+      <% if (user) { %>
+        <form method="post" action="/deconnexion" style="display:inline"><button class="link" style="color:var(--brown);padding:8px 12px">Déconnexion</button></form>
+      <% } %>
+    </div>
+  </nav>
+  <main>
+    <% if (flash) { %><div class="wrap"><div class="alert <%= flash.type %>" role="status"><%= flash.text %></div></div><% } %>

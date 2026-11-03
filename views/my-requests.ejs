@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <div class="page-head section-head"><div><p class="eyebrow">Espace particulier</p><h1 class="display">Mes demandes</h1></div><a class="btn btn-dark" href="/demandes/nouvelle">Nouvelle demande</a></div>
+  <% if (!requests.length) { %>
+    <div class="panel" style="text-align:center"><h3>Aucune demande pour l'instant</h3><p class="muted">Décrivez vos travaux pour recevoir vos premiers devis.</p><a class="btn btn-dark" href="/demandes/nouvelle">Décrire mes travaux</a></div>
+  <% } %>
+  <div class="list">
+    <% requests.forEach(r => { %>
+      <a class="list-item" href="/demandes/<%= r.id %>">
+        <div><strong><%= r.title %></strong><br><span class="small muted"><%= CATEGORIES[r.category] %> · <%= r.city %> · publiée le <%= frDate(r.created_at) %></span></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="badge"><%= r.quote_count %> devis</span>
+          <span class="badge <%= { open: 'warn', assigned: 'verified', done: 'ok', cancelled: 'err' }[r.status] %>"><%= STATUS[r.status] %></span>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</div>
+<%- include('partials/foot') %>

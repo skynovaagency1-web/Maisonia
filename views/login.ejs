@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+<div class="narrow" style="max-width:520px">
+  <div class="page-head"><h1 class="display">Connexion</h1></div>
+  <div class="panel">
+    <% if (error) { %><div class="alert error" role="alert"><%= error %></div><% } %>
+    <form class="stack" method="post" action="/connexion">
+      <% if (next) { %><input type="hidden" name="next" value="<%= next %>"><% } %>
+      <label>E-mail<input type="email" name="email" required autocomplete="email" value="<%= email %>"></label>
+      <label>Mot de passe<input type="password" name="password" required autocomplete="current-password"></label>
+      <button class="btn btn-dark" type="submit">Se connecter</button>
+    </form>
+  </div>
+  <p class="muted" style="text-align:center;margin-top:18px">Pas encore de compte ? <a href="/inscription<%= next ? '?next=' + encodeURIComponent(next) : '' %>">Créer un compte particulier</a> · <a href="/inscription?role=artisan">Je suis artisan</a></p>
+</div>
+<%- include('partials/foot') %>

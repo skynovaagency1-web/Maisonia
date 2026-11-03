@@ -1,0 +1,15 @@
+<% const trades = splitList(a.trades); %>
+<a class="artisan-card" href="/artisans/<%= a.id %>">
+  <img src="<%= a.cover ? '/uploads/' + a.cover : photoFor(trades[0], a.id) %>" alt="" loading="lazy">
+  <div class="body">
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+      <h3><%= a.company || a.name %></h3>
+      <% if (a.verified) { %><span class="badge verified">✓ Vérifié</span><% } %>
+    </div>
+    <div class="small">
+      <% if (a.review_count) { %><span class="stars">★</span> <strong><%= String(a.rating).replace('.', ',') %></strong> <span class="muted">(<%= a.review_count %> avis)</span><% } else { %><span class="muted">Nouveau sur Maisonia</span><% } %>
+    </div>
+    <div class="tags"><% trades.forEach(t => { %><span class="badge"><%= CATEGORIES[t] %></span><% }) %></div>
+    <div class="small muted">Intervient dans : <%= splitList(a.departments).join(', ') %></div>
+  </div>
+</a>
