@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+<div class="narrow">
+  <div class="page-head">
+    <p class="eyebrow"><%= role === 'artisan' ? 'Espace professionnel' : 'Espace particulier' %></p>
+    <h1 class="display"><%= role === 'artisan' ? 'Rejoindre Servizone' : 'Créer mon compte' %></h1>
+    <p class="muted"><%= role === 'artisan' ? 'Créez votre compte, puis complétez votre profil professionnel (SIRET, assurance décennale) pour être vérifié.' : 'Un compte vous permet de suivre vos demandes et de comparer les devis reçus.' %></p>
+  </div>
+  <div class="choice-row" style="margin-bottom:18px">
+    <a class="btn <%= role === 'client' ? 'btn-dark' : 'btn-light' %> btn-sm" href="/inscription?role=client<%= next ? '&next=' + encodeURIComponent(next) : '' %>">Je suis un particulier</a>
+    <a class="btn <%= role === 'artisan' ? 'btn-dark' : 'btn-light' %> btn-sm" href="/inscription?role=artisan">Je suis un artisan</a>
+  </div>
+  <div class="panel">
+    <% if (error) { %><div class="alert error" role="alert"><%= error %></div><% } %>
+    <form class="stack" method="post" action="/inscription">
+      <input type="hidden" name="role" value="<%= role %>">
+      <% if (next) { %><input type="hidden" name="next" value="<%= next %>"><% } %>
+      <label><%= role === 'artisan' ? 'Nom et prénom du responsable' : 'Nom et prénom' %><input type="text" name="name" required autocomplete="name" value="<%= values.name || '' %>"></label>
+      <div class="row">
+        <label>E-mail<input type="email" name="email" required autocomplete="email" value="<%= values.email || '' %>"></label>
+        <label>Téléphone<input type="tel" name="phone" required autocomplete="tel" value="<%= values.phone || '' %>"><span class="hint">Communiqué uniquement à l'<%= role === 'artisan' ? 'client' : 'artisan' %> que vous choisissez.</span></label>
+      </div>
+      <label>Mot de passe<input type="password" name="password" required minlength="8" autocomplete="new-password"><span class="hint">8 caractères minimum.</span></label>
+      <label class="check"><input type="checkbox" name="cgu" value="1" required> <span>J'accepte les <a href="/conditions" target="_blank">conditions d'utilisation</a> et j'ai lu la <a href="/confidentialite" target="_blank">politique de confidentialité</a>.</span></label>
+      <p class="notice">Vos données sont traitées par Servizone pour créer et gérer votre compte et vous mettre en relation <%= role === 'artisan' ? 'avec des particuliers' : 'avec des artisans' %> (exécution des conditions d'utilisation). Vous pouvez y accéder, les rectifier ou supprimer votre compte à tout moment depuis « Mon compte ». <a href="/confidentialite">En savoir plus</a>.</p>
+      <button class="btn btn-dark" type="submit">Créer mon compte</button>
+    </form>
+  </div>
+  <p class="muted" style="text-align:center;margin-top:18px">Déjà inscrit ? <a href="/connexion<%= next ? '?next=' + encodeURIComponent(next) : '' %>">Se connecter</a></p>
+</div>
+<%- include('partials/foot') %>

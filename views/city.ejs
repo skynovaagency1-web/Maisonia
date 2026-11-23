@@ -1,0 +1,29 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <div class="page-head">
+    <p class="eyebrow"><a href="/">Accueil</a> · <%= city.name %> (<%= city.department %>)</p>
+    <h1 class="display"><%= trade.label %> à <%= city.name %></h1>
+    <p class="muted" style="max-width:640px">Besoin d'un <%= trade.label.toLowerCase() %> à <%= city.name %> ? Décrivez vos travaux (<%= trade.jobs %>) et recevez gratuitement les devis détaillés d'artisans vérifiés du <%= city.department %>.</p>
+    <a class="btn btn-dark" href="/demandes/nouvelle?categorie=<%= trade.category %>">Demander un devis gratuit <span class="arrow">→</span></a>
+  </div>
+  <section style="margin-top:32px">
+    <h2><%= artisans.length ? 'Nos ' + trade.plural + ' vérifiés à ' + city.name : 'Bientôt des ' + trade.plural + ' à ' + city.name %></h2>
+    <% if (!artisans.length) { %>
+      <div class="panel"><p class="muted" style="margin:0">Aucun professionnel vérifié n'est encore inscrit dans ce secteur. Publiez votre demande : notre équipe vous trouve quelqu'un. Vous êtes <%= trade.label.toLowerCase() %> à <%= city.name %> ? <a href="/inscription?role=artisan">Rejoignez Servizone</a>.</p></div>
+    <% } else { %>
+      <div class="grid grid-3"><% artisans.forEach(a => { %><%- include('partials/artisan-card', { a }) %><% }) %></div>
+    <% } %>
+  </section>
+  <section class="grid grid-3">
+    <div class="panel"><h3>SIRET et assurance contrôlés</h3><p class="muted">Chaque artisan est vérifié par notre équipe avant de pouvoir vous envoyer un devis.</p></div>
+    <div class="panel"><h3>Devis détaillés</h3><p class="muted">Chaque prestation chiffrée, taux horaire TTC, totaux HT et TTC : vous comparez facilement.</p></div>
+    <div class="panel"><h3>Avis vérifiés</h3><p class="muted">Seuls les clients ayant fait appel à l'artisan peuvent le noter.</p></div>
+  </section>
+  <section>
+    <h2 style="font-size:1.2rem">Autres métiers à <%= city.name %></h2>
+    <div class="link-cloud"><% Object.entries(TRADES).filter(([k]) => k !== slug.metier).forEach(([k, t]) => { %><a href="/<%= k %>/<%= slug.ville %>"><%= t.label %> à <%= city.name %></a><% }) %></div>
+    <h2 style="font-size:1.2rem;margin-top:24px"><%= trade.label %> dans les villes voisines</h2>
+    <div class="link-cloud"><% Object.entries(CITIES).filter(([k]) => k !== slug.ville).forEach(([k, c]) => { %><a href="/<%= slug.metier %>/<%= k %>"><%= trade.label %> à <%= c.name %></a><% }) %></div>
+  </section>
+</div>
+<%- include('partials/foot') %>

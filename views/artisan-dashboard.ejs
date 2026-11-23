@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+<% const a = artisan; %>
+<div class="wrap">
+  <div class="page-head section-head">
+    <div><p class="eyebrow">Espace artisan</p><h1 class="display"><%= a.company || 'Bienvenue' %></h1></div>
+    <% if (a.verified) { %><a class="btn btn-light" href="/artisans/<%= user.id %>">Voir mon profil public</a><% } %>
+  </div>
+  <% if (!complete) { %>
+    <div class="alert info">Complétez votre profil (SIRET, adresse, métiers, départements et assurance décennale) pour être vérifié et recevoir des demandes. <a href="/espace-artisan/profil">Compléter mon profil →</a></div>
+  <% } else if (!a.verified) { %>
+    <div class="alert info">Profil complet : notre équipe vérifie votre SIRET et votre assurance. Vous pouvez déjà consulter les demandes, et vous pourrez envoyer des devis une fois vérifié.</div>
+  <% } %>
+  <% if (insuranceExpired) { %><div class="alert error">Votre assurance décennale est arrivée à échéance le <%= frDate(a.insurance_valid_until) %>. Mettez-la à jour pour continuer à envoyer des devis.</div><% } %>
+
+  <section style="margin-top:28px">
+    <div class="section-head"><h2>Demandes près de chez vous</h2><span class="muted small"><%= splitList(a.trades).map(t => CATEGORIES[t]).join(', ') || 'aucun métier' %> · départements <%= splitList(a.departments).join(', ') || '—' %></span></div>
+    <% if (!matching.length) { %><div class="panel"><p class="muted" style="margin:0">Aucune nouvelle demande dans votre secteur pour le moment.</p></div><% } %>
+    <div class="grid grid-3">
+      <% matching.forEach(r => { %>
+        <a class="artisan-card" href="/demandes/<%= r.id %>">
+          <img src="<%= photoFor(r.category, r.id) %>" alt="" loading="lazy">
+          <div class="body">
+            <div style="display:flex;justify-content:space-between;gap:8px"><span class="badge"><%= CATEGORIES[r.category] %></span><span class="small muted"><%= frDate(r.created_at) %></span></div>
+            <h3><%= r.title %></h3>
+            <span class="small muted"><%= r.postcode %> <%= r.city %> · <%= r.photo_count %> photo<%= r.photo_count > 1 ? 's' : '' %> · <%= r.quote_count %> devis déjà reçu<%= r.quote_count > 1 ? 's' : '' %></span>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+
+  <section style="margin-top:40px">
+    <h2>Mes devis</h2>
+    <% if (!quotes.length) { %><div class="panel"><p class="muted" style="margin:0">Vous n'avez pas encore envoyé de devis.</p></div><% } %>
+    <div class="list">
+      <% quotes.forEach(q => { %>
+        <a class="list-item" href="/demandes/<%= q.request_id %>">
+          <div><strong><%= q.title %></strong><br><span class="small muted"><%= q.city %> · envoyé le <%= frDate(q.created_at) %></span></div>
+          <div style="display:flex;gap:8px;align-items:center"><strong><%= euro(q.total_ttc) %></strong>
+            <span class="badge <%= { sent: 'warn', accepted: 'ok', declined: '' }[q.status] %>"><%= { sent: 'En attente', accepted: 'Accepté', declined: 'Non retenu' }[q.status] %></span>
+            <% if (q.status === 'accepted') { %><span class="badge"><%= STATUS[q.request_status] %></span><% } %>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+</div>
+<%- include('partials/foot') %>

@@ -1,0 +1,27 @@
+{
+  // Configuration Cloudflare Workers de Servizone. Voir DEPLOIEMENT.md.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "servizone",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2025-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "build": { "command": "npm run build" },
+  // Fichiers statiques (CSS, polices, favicon) servis directement par Cloudflare.
+  "assets": { "directory": "./public" },
+  "observability": { "enabled": true },
+  "vars": {
+    "NODE_ENV": "production",
+    "APP_URL": "https://servizone.fr",
+    "MAIL_FROM": "Servizone <noreply@servizone.fr>"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "servizone",
+      // À remplacer par l'identifiant affiché par « npx wrangler d1 create servizone ».
+      "database_id": "be56ceed-bbee-4cb9-b048-bdff3f78107e",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "servizone-photos" }]
+}

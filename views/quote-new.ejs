@@ -1,0 +1,61 @@
+<%- include('partials/head') %>
+<% const r = request; const items = Array.isArray(values.items) && values.items.length ? values.items : [{}]; %>
+<div class="wrap">
+  <div class="page-head"><p class="eyebrow">Devis pour : <%= CATEGORIES[r.category] %> · <%= r.postcode %> <%= r.city %></p><h1 class="display">Envoyer un devis</h1><p class="muted"><strong><%= r.title %></strong> — <a href="/demandes/<%= r.id %>">revoir la demande</a></p></div>
+  <div class="panel">
+    <% if (error) { %><div class="alert error" role="alert"><%= error %></div><% } %>
+    <form class="stack" method="post" id="quote-form">
+      <fieldset>
+        <legend>Décompte détaillé (prix HT)</legend>
+        <p class="small muted" style="margin:0">Une ligne par prestation ou fourniture : désignation, quantité, unité (heure, m², ml, pièce, forfait…) et prix unitaire HT.</p>
+        <div id="items" class="grid" style="gap:10px">
+          <% items.forEach((it, i) => { %>
+            <div class="item-row" style="display:grid;grid-template-columns:3fr 1fr 1fr 1.3fr;gap:8px">
+              <input type="text" name="items[<%= i %>][label]" placeholder="Désignation" aria-label="Désignation" value="<%= it.label || '' %>">
+              <input type="text" name="items[<%= i %>][qty]" placeholder="Qté" aria-label="Quantité" inputmode="decimal" value="<%= it.qty || '' %>">
+              <input type="text" name="items[<%= i %>][unit]" placeholder="Unité" aria-label="Unité" value="<%= it.unit || '' %>" list="units">
+              <input type="text" name="items[<%= i %>][unit_price_ht]" placeholder="Prix unit. HT" aria-label="Prix unitaire HT" inputmode="decimal" value="<%= it.unit_price_ht || '' %>">
+            </div>
+          <% }) %>
+        </div>
+        <datalist id="units"><option value="heure"><option value="m²"><option value="ml"><option value="pièce"><option value="forfait"></datalist>
+        <div><button type="button" class="btn btn-light btn-sm" id="add-item">+ Ajouter une ligne</button></div>
+      </fieldset>
+      <div class="row-3">
+        <label>Frais de déplacement HT<input type="text" name="travel_fee_ht" inputmode="decimal" value="<%= values.travel_fee_ht || '0' %>"></label>
+        <label>Taux de TVA
+          <select name="vat_rate">
+            <% [['20','20 % (taux normal)'],['10','10 % (rénovation de logement de plus de 2 ans)'],['5.5','5,5 % (rénovation énergétique)'],['0','0 % (franchise en base de TVA)']].forEach(([v, l]) => { %><option value="<%= v %>" <%= String(values.vat_rate) === v ? 'selected' : '' %>><%= l %></option><% }) %>
+          </select>
+        </label>
+        <label>Taux horaire main-d'œuvre TTC<input type="text" name="labour_rate_ttc" required inputmode="decimal" value="<%= values.labour_rate_ttc || '' %>"></label>
+      </div>
+      <label>Modalités de décompte du temps<input type="text" name="time_method" required placeholder="ex. Temps estimé forfaitairement, tout dépassement sera soumis à votre accord" value="<%= values.time_method || '' %>"></label>
+      <div class="row-3">
+        <label>Date de début prévue<input type="date" name="start_date" required value="<%= values.start_date || '' %>"></label>
+        <label>Durée estimée<input type="text" name="duration" required placeholder="ex. 2 jours" value="<%= values.duration || '' %>"></label>
+        <label>Validité de l'offre (jours)<input type="number" name="validity_days" min="1" max="365" required value="<%= values.validity_days || '30' %>"></label>
+      </div>
+      <div class="row">
+        <label>Ce devis est
+          <select name="quote_free"><option value="1" <%= values.quote_free !== '0' ? 'selected' : '' %>>Gratuit</option><option value="0" <%= values.quote_free === '0' ? 'selected' : '' %>>Payant</option></select>
+        </label>
+        <label>Coût du devis s'il est payant (€)<input type="text" name="quote_cost" inputmode="decimal" value="<%= values.quote_cost || '' %>"></label>
+      </div>
+      <label>Message au client <span class="hint">Facultatif</span><textarea name="message" maxlength="2000"><%= values.message || '' %></textarea></label>
+      <p class="notice">Votre devis reprendra automatiquement la raison sociale, l'adresse et le SIRET de votre entreprise ainsi que votre assurance décennale (assureur, n° de contrat, couverture). Les totaux HT et TTC sont calculés automatiquement.</p>
+      <button class="btn btn-dark" type="submit">Envoyer le devis <span class="arrow">→</span></button>
+    </form>
+  </div>
+</div>
+<script>
+  document.getElementById('add-item').addEventListener('click', () => {
+    const box = document.getElementById('items');
+    const row = box.lastElementChild.cloneNode(true);
+    const i = box.children.length;
+    row.querySelectorAll('input').forEach((inp) => { inp.name = inp.name.replace(/items\[\d+\]/, `items[${i}]`); inp.value = ''; });
+    box.appendChild(row);
+    row.querySelector('input').focus();
+  });
+</script>
+<%- include('partials/foot') %>

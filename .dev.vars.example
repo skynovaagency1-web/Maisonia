@@ -1,0 +1,5 @@
+SESSION_SECRET=dev-secret-change-me
+NODE_ENV=development
+APP_URL=http://localhost:8787
+ADMIN_EMAIL=admin@servizone.test
+ADMIN_PASSWORD=servizone123

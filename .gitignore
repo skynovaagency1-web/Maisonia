@@ -3,3 +3,6 @@ data/
 uploads/*
 !uploads/.gitkeep
 .env
+.dev.vars
+.wrangler/
+src/views.generated.js

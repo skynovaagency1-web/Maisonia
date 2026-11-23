@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <div class="page-head"><p class="eyebrow">Nouvelle demande</p><h1 class="display">Décrivez vos travaux</h1><p class="muted">Plus votre description est précise, plus les devis seront justes.</p></div>
+  <div class="split">
+    <div class="panel">
+      <% if (error) { %><div class="alert error" role="alert"><%= error %></div><% } %>
+      <form class="stack" method="post" action="/demandes/nouvelle" enctype="multipart/form-data">
+        <fieldset>
+          <legend>Type de travaux</legend>
+          <div class="choice-row">
+            <% Object.entries(CATEGORIES).forEach(([k, v]) => { %>
+              <label class="choice"><input type="radio" name="category" value="<%= k %>" required <%= values.category === k ? 'checked' : '' %>><span><%= v %></span></label>
+            <% }) %>
+          </div>
+        </fieldset>
+        <label>Titre de la demande<input type="text" name="title" required maxlength="120" placeholder="ex. Fuite sous l'évier de la cuisine" value="<%= values.title || '' %>"></label>
+        <label>Description<textarea name="description" required minlength="20" placeholder="Que faut-il faire ? Dimensions, matériaux, accès, contraintes…"><%= values.description || '' %></textarea></label>
+        <label>Photos <span class="hint">Jusqu'à 5 photos (JPEG, PNG ou WebP, 5 Mo max chacune). Évitez les photos où l'on voit des personnes ou des documents.</span>
+          <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple>
+        </label>
+        <fieldset>
+          <legend>Lieu des travaux</legend>
+          <label>Adresse<input type="text" name="address" required autocomplete="street-address" value="<%= values.address || '' %>"><span class="hint">Communiquée uniquement à l'artisan dont vous acceptez le devis.</span></label>
+          <div class="row">
+            <label>Code postal<input type="text" name="postcode" required inputmode="numeric" pattern="\d{5}" maxlength="5" autocomplete="postal-code" value="<%= values.postcode || '' %>"></label>
+            <label>Ville<input type="text" name="city" required autocomplete="address-level2" value="<%= values.city || '' %>"></label>
+          </div>
+        </fieldset>
+        <label>Date souhaitée <span class="hint">Facultatif</span><input type="date" name="desired_date" value="<%= values.desired_date || '' %>"></label>
+        <label class="check"><input type="checkbox" name="consent" value="1" required <%= values.consent ? 'checked' : '' %>>
+          <span>J'accepte que ma demande (description, photos, ville et code postal) soit transmise aux artisans vérifiés de mon secteur afin qu'ils me proposent un devis.</span></label>
+        <p class="notice"><strong>Vos données :</strong> Servizone traite les informations de ce formulaire pour vous mettre en relation avec des artisans (exécution du service que vous demandez). Seuls les artisans vérifiés du métier et du département concernés voient votre demande ; votre nom, votre adresse exacte et votre téléphone ne sont transmis qu'à l'artisan que vous choisissez. Les demandes sont conservées 3 ans après votre dernière activité, puis supprimées. Vous pouvez accéder à vos données, les rectifier, les supprimer ou vous opposer à leur traitement, et saisir la CNIL. <a href="/confidentialite" target="_blank">Politique de confidentialité</a>.</p>
+        <button class="btn btn-dark" type="submit">Publier ma demande <span class="arrow">→</span></button>
+      </form>
+    </div>
+    <aside class="panel panel-dark sticky">
+      <p class="eyebrow" style="color:var(--gold)">Bon à savoir</p>
+      <h3>Ce que vous recevrez</h3>
+      <ul class="muted" style="padding-left:18px;display:grid;gap:8px">
+        <li>Des devis d'artisans dont le SIRET et l'assurance décennale ont été vérifiés.</li>
+        <li>Un décompte détaillé : chaque prestation avec quantité et prix unitaire.</li>
+        <li>Le taux horaire TTC, les frais de déplacement et les totaux HT et TTC.</li>
+        <li>La durée de validité du devis, et s'il est gratuit ou payant.</li>
+      </ul>
+      <p class="small muted">Servizone est gratuit pour les particuliers.</p>
+    </aside>
+  </div>
+</div>
+<%- include('partials/foot') %>

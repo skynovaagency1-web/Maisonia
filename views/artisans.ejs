@@ -1,0 +1,29 @@
+<%- include('partials/head') %>
+<div class="wrap">
+  <div class="page-head">
+    <p class="eyebrow">Annuaire</p>
+    <h1 class="display">Les artisans vérifiés</h1>
+    <p class="muted">Tous les professionnels listés ont un SIRET valide et une assurance contrôlée par notre équipe.</p>
+  </div>
+  <form class="panel" method="get" style="display:flex;gap:12px;flex-wrap:wrap;align-items:end;padding:18px">
+    <label style="flex:1 1 200px">Métier
+      <select name="categorie"><option value="">Tous les métiers</option>
+        <% Object.entries(CATEGORIES).forEach(([k, v]) => { %><option value="<%= k %>" <%= categorie === k ? 'selected' : '' %>><%= v %></option><% }) %>
+      </select>
+    </label>
+    <label style="flex:1 1 160px">Département <input type="text" name="departement" value="<%= departement %>" placeholder="ex. 75" maxlength="3" inputmode="numeric"></label>
+    <button class="btn btn-dark" type="submit">Filtrer</button>
+  </form>
+  <section style="margin-top:28px">
+    <% if (!artisans.length) { %>
+      <div class="panel" style="text-align:center">
+        <h3>Aucun artisan pour l'instant dans ce secteur</h3>
+        <p class="muted">Publiez quand même votre demande : notre équipe vous trouve un professionnel.</p>
+        <a class="btn btn-dark" href="/demandes/nouvelle<%= categorie ? '?categorie=' + categorie : '' %>">Publier une demande</a>
+      </div>
+    <% } else { %>
+      <div class="grid grid-3"><% artisans.forEach(a => { %><%- include('partials/artisan-card', { a }) %><% }) %></div>
+    <% } %>
+  </section>
+</div>
+<%- include('partials/foot') %>

@@ -1,0 +1,52 @@
+<%- include('partials/head') %>
+<% const a = artisan; const trades = splitList(a.trades); %>
+<div class="wrap">
+  <div class="page-head split" style="align-items:end">
+    <div>
+      <p class="eyebrow"><%= trades.map(t => CATEGORIES[t]).join(' · ') %></p>
+      <h1 class="display"><%= a.company || a.name %></h1>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <% if (a.verified) { %><span class="badge verified">✓ Profil vérifié par Servizone</span><% } else { %><span class="badge warn">En attente de vérification</span><% } %>
+        <% if (a.review_count) { %><span><span class="stars"><%= '★'.repeat(Math.round(a.rating)) %></span> <strong><%= String(a.rating).replace('.', ',') %>/5</strong> <span class="muted">· <%= a.review_count %> avis</span></span><% } %>
+      </div>
+    </div>
+    <div style="text-align:right"><% if (!user || user.role === 'client') { %><a class="btn btn-dark" href="/demandes/nouvelle?categorie=<%= trades[0] %>">Demander un devis <span class="arrow">→</span></a><% } %></div>
+  </div>
+  <div class="split">
+    <div class="grid" style="gap:24px">
+      <% if (a.bio) { %><div class="panel"><h3>Présentation</h3><p style="white-space:pre-line"><%= a.bio %></p></div><% } %>
+      <div class="panel" id="realisations">
+        <h3>Réalisations</h3>
+        <% if (portfolio.length) { %>
+          <div class="portfolio"><% portfolio.forEach(p => { %><figure><img src="/uploads/<%= p.filename %>" alt="<%= p.caption || 'Réalisation' %>" loading="lazy"><% if (p.caption) { %><figcaption><%= p.caption %></figcaption><% } %></figure><% }) %></div>
+        <% } else { %><p class="muted">Pas encore de photos de chantier.</p><% } %>
+      </div>
+      <div class="panel">
+        <h3>Avis clients</h3>
+        <% if (!reviews.length) { %><p class="muted">Aucun avis pour le moment.</p><% } %>
+        <div class="list">
+          <% reviews.forEach(r => { %>
+            <div style="border-bottom:1px solid var(--line);padding:12px 0">
+              <div><span class="stars"><%= '★'.repeat(r.rating) %><span style="color:var(--line)"><%= '★'.repeat(5 - r.rating) %></span></span> <strong><%= r.client_name.split(' ')[0] %></strong> <span class="muted small">· <%= CATEGORIES[r.category] %> · <%= frDate(r.created_at) %></span></div>
+              <% if (r.comment) { %><p style="margin:.4em 0 0"><%= r.comment %></p><% } %>
+            </div>
+          <% }) %>
+        </div>
+        <p class="small muted" style="margin-top:12px">Seuls les clients ayant accepté un devis de cet artisan et terminé leurs travaux peuvent laisser un avis.</p>
+      </div>
+    </div>
+    <aside class="panel sticky">
+      <h3>En bref</h3>
+      <table>
+        <tr><th>Métiers</th><td><%= trades.map(t => CATEGORIES[t]).join(', ') %></td></tr>
+        <tr><th>Secteur</th><td>Départements <%= splitList(a.departments).join(', ') %></td></tr>
+        <tr><th>SIRET</th><td><%= a.siret %></td></tr>
+        <% if (a.qualification) { %><tr><th>Qualifications</th><td><%= a.qualification %></td></tr><% } %>
+        <tr><th>Assurance</th><td>Décennale <%= a.insurer %><br><span class="small muted">valable jusqu'au <%= frDate(a.insurance_valid_until) %></span></td></tr>
+      </table>
+      <p class="small muted">Les coordonnées de l'artisan vous sont communiquées dès que vous acceptez son devis.</p>
+      <a class="small" href="/contact?sujet=artisan&ref=<%= encodeURIComponent((a.company || a.name) + ' (profil ' + a.id + ')') %>">Signaler un problème</a>
+    </aside>
+  </div>
+</div>
+<%- include('partials/foot') %>
