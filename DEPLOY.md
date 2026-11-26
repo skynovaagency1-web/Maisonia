@@ -29,7 +29,7 @@ On GitHub, open the pull request and click **Merge**. Cloudflare deploys the `ma
 ## 4. Connect the GitHub repository
 
 1. Go to **Compute → Workers & Pages → Create → Import a repository**.
-2. Connect GitHub if needed, then choose `skynovaagency1-web/Maisonia`.
+2. Connect GitHub if needed, then choose `skynovaagency1-web/Servizone`.
 3. Keep the suggested settings: project name `servizone`, build command empty, deploy command `npx wrangler deploy`, branch `main`.
 4. Click **Create and deploy**. After a minute or two the site is live at `https://servizone.<your-account>.workers.dev`.
 
