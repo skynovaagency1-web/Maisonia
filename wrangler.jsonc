@@ -11,7 +11,7 @@
   "observability": { "enabled": true },
   "vars": {
     "NODE_ENV": "production",
-    "APP_URL": "https://servizone.fr",
+    "APP_URL": "https://servizone.skynovaagency.workers.dev",
     "MAIL_FROM": "Servizone <noreply@servizone.fr>"
   },
   "d1_databases": [
